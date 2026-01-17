@@ -21,7 +21,7 @@ public class Window {
     private Shader shader;
     private RenderBatch renderBatch;
 
-    public static int width = 800, height = 600;
+    public static int width = 1200, height = 1000;
 
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");

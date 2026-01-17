@@ -35,6 +35,6 @@ public class GameObject {
     }
 
     public void update() {
-        this.transform.rotate(new Vector3f(0.5f, 1.0f, 0.0f));
+        this.transform.rotate(new Vector3f(0.25f, 0.5f, 0.0f));
     }
 }

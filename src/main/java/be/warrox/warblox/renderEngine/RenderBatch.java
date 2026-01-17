@@ -54,7 +54,12 @@ public class RenderBatch {
         Shader shader = new Shader("assets/shaders/default.glsl");
         shader.compile();
 
-        addGameObject(new GameObject(new Transform(new Vector3f(0.0f, 0.0f, -5.0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png"));
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                addGameObject(new GameObject(new Transform(new Vector3f(x-5, y-5, -5.0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png"));
+
+            }
+        }
 
         return shader;
 
@@ -64,9 +69,7 @@ public class RenderBatch {
         shader.use();
 
         glBindVertexArray(vaoID);
-        //this.texture.bind();
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        //this.texture.unbind();
+
         for (GameObject go : gameObjects) {
             go.update();
             go.render(shader);
