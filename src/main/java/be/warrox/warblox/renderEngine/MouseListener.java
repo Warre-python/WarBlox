@@ -69,11 +69,13 @@ public class MouseListener {
     }
 
     public static float getDx() {
-        return (float)(get().lastX - get().xPos);
+        float dx = (float)(get().xPos - get().lastX);
+        return dx;
     }
 
     public static float getDy() {
-        return (float)(get().lastY - get().yPos);
+        float dy = (float)(get().yPos - get().lastY);
+        return dy;
     }
 
     public static float getScrollX() {

@@ -66,10 +66,7 @@ public class Window {
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
+        glfwSetKeyCallback(window, KeyListener::keyCallback);
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -119,11 +116,18 @@ public class Window {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !glfwWindowShouldClose(window) ) {
+            glfwPollEvents();
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
+                glfwSetWindowShouldClose(window, true);
+            }
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
 
+
+            camera.update(deltaTime);
             renderBatch.render(shader, camera);
-            camera.update();
 
             float currentFrame = (float)glfwGetTime();
             deltaTime = currentFrame - lastFrame;
@@ -131,9 +135,7 @@ public class Window {
 
             glfwSwapBuffers(window); // swap the color buffers
 
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
+            MouseListener.endFrame();
         }
     }
 
