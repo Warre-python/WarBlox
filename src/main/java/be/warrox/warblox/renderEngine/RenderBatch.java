@@ -54,9 +54,9 @@ public class RenderBatch {
         Shader shader = new Shader("assets/shaders/default.glsl");
         shader.compile();
 
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                addGameObject(new GameObject(new Transform(new Vector3f(x-5, y-5, -5.0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png"));
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                addGameObject(new GameObject(new Transform(new Vector3f(x-1, y-1, -5.0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png"));
 
             }
         }
