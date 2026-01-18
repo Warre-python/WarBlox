@@ -1,5 +1,7 @@
 package be.warrox.warblox.renderEngine;
 
+import be.warrox.warblox.game.objects.Cube;
+import be.warrox.warblox.game.objects.Rectangle;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public class RenderBatch {
     private int vboID, vaoID, eboID;
     private List<GameObject> gameObjects = new ArrayList<>();
     private Texture texture = new Texture("assets/textures/block/deepslate_diamond_ore.png");
+    private Camera camera;
 
     private final int POS_SIZE = 3;
     //private final int COLOR_SIZE = 3;
@@ -54,12 +57,11 @@ public class RenderBatch {
         Shader shader = new Shader("assets/shaders/default.glsl");
         shader.compile();
 
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                addGameObject(new GameObject(new Transform(new Vector3f(x-1, y-1, -5.0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png"));
+        camera = new Camera(new Vector3f(0, 0, 0));
+        camera.yaw = 180.0f;
 
-            }
-        }
+        addGameObject(new Cube(new Transform(new Vector3f(0, 0, -5.0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 2.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png", this));
+        addGameObject(new Rectangle(new Transform(new Vector3f(-1.5f, -1.5f, -5.0f), new Vector3f(1, 1, 1), new Vector3f(2.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png", this));
 
         return shader;
 
@@ -68,19 +70,41 @@ public class RenderBatch {
     public void render(Shader shader) {
         shader.use();
 
-        glBindVertexArray(vaoID);
+        shader.uploadMat4f("uProjection", camera.getProjectionMatrix());
+
+        shader.uploadMat4f("uView", camera.getViewMatrix());
+
 
         for (GameObject go : gameObjects) {
             go.update();
             go.render(shader);
         }
 
-        glBindVertexArray(0);
 
         shader.detach();
+
+        this.camera.processInput(Window.get().deltaTime);
     }
 
     public void addGameObject(GameObject go) {
         this.gameObjects.add(go);
     }
+
+    public int setupMesh(float[] vertices, int[] indices) {
+        int vao = glGenVertexArrays();
+        glBindVertexArray(vao);
+        int vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        int ebo = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, POS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, POS_OFFSET);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, TEXCOORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEXCOORDS_OFFSET);
+        glEnableVertexAttribArray(1);
+        return vao;
+    }
+
 }

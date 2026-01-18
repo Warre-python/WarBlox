@@ -21,7 +21,12 @@ public class Window {
     private Shader shader;
     private RenderBatch renderBatch;
 
+    private static Window instance = null;
+
     public static int width = 1200, height = 1000;
+
+    public float deltaTime = 0.0f;
+    private float lastFrame = 0.0f;
 
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -116,6 +121,10 @@ public class Window {
 
             renderBatch.render(shader);
 
+            float currentFrame = (float)glfwGetTime();
+            deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+
             glfwSwapBuffers(window); // swap the color buffers
 
             // Poll for window events. The key callback above will only be
@@ -126,5 +135,20 @@ public class Window {
 
     public long getWindow() {
         return window;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public static Window get(){
+        if(Window.instance == null){
+            Window.instance = new Window();
+        }
+        return Window.instance;
     }
 }

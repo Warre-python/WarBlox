@@ -61,5 +61,4 @@ public class Primitives {
             16, 17, 19, 19, 17, 18, // Right
             20, 21, 23, 23, 21, 22  // Left
     };
-
 }
