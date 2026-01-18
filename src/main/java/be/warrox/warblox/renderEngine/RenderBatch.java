@@ -17,7 +17,6 @@ public class RenderBatch {
     private int vboID, vaoID, eboID;
     private List<GameObject> gameObjects = new ArrayList<>();
     private Texture texture = new Texture("assets/textures/block/deepslate_diamond_ore.png");
-    private Camera camera;
 
     private final int POS_SIZE = 3;
     //private final int COLOR_SIZE = 3;
@@ -57,33 +56,27 @@ public class RenderBatch {
         Shader shader = new Shader("assets/shaders/default.glsl");
         shader.compile();
 
-        camera = new Camera(new Vector3f(0, 0, 0));
-        camera.yaw = 180.0f;
 
-        addGameObject(new Cube(new Transform(new Vector3f(0, 0, -5.0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 2.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png", this));
-        addGameObject(new Rectangle(new Transform(new Vector3f(-1.5f, -1.5f, -5.0f), new Vector3f(1, 1, 1), new Vector3f(2.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png", this));
+        addGameObject(new Cube(new Transform(new Vector3f(0, 0, 0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 2.0f, 1.0f)), "assets/textures/block/oak_planks.png", this));
+        addGameObject(new Rectangle(new Transform(new Vector3f(-1.5f, -1.5f, 0f), new Vector3f(1, 1, 1), new Vector3f(2.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png", this));
 
         return shader;
 
     }
 
-    public void render(Shader shader) {
+    public void render(Shader shader, Camera camera) {
         shader.use();
 
-        shader.uploadMat4f("uProjection", camera.getProjectionMatrix());
-
-        shader.uploadMat4f("uView", camera.getViewMatrix());
 
 
         for (GameObject go : gameObjects) {
             go.update();
-            go.render(shader);
+            go.render(shader, camera);
         }
 
 
         shader.detach();
 
-        this.camera.processInput(Window.get().deltaTime);
     }
 
     public void addGameObject(GameObject go) {

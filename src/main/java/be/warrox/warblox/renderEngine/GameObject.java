@@ -41,10 +41,10 @@ public abstract class GameObject {
         vao = rb.setupMesh(vertices, indices);
     }
 
-    public void render(Shader shader) {
-        //shader.uploadMat4f("view", new Matrix4f());
+    public void render(Shader shader, Camera camera) {
+        shader.uploadMat4f("view", camera.getViewMatrix());
         shader.uploadMat4f("model", this.transform.getModelMatrix());
-        //shader.uploadMat4f("projection", Transform.getProjectionMatrix(Window.width, Window.height));
+        shader.uploadMat4f("projection", Transform.getProjectionMatrix(Window.width, Window.height));
 
         glBindVertexArray(vao);
         if (this.texture != null) this.texture.bind();
@@ -57,6 +57,6 @@ public abstract class GameObject {
     }
 
     public void update() {
-        this.transform.rotate(new Vector3f(0.5f, 0.5f, 0.5f));
+        //this.transform.rotate(new Vector3f(0.5f, 0.5f, 0.5f));
     }
 }
