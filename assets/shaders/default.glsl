@@ -22,8 +22,14 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform sampler2D ourTexture;
+uniform vec4 ourColor;
+uniform bool useTexture; // Boolean flag to switch logic
 
 void main()
 {
-    FragColor = texture(ourTexture, TexCoord);
+    if (useTexture) {
+        FragColor = texture(ourTexture, TexCoord);
+    } else {
+        FragColor = ourColor;
+    }
 }

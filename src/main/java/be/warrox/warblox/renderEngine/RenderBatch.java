@@ -56,10 +56,6 @@ public class RenderBatch {
         Shader shader = new Shader("assets/shaders/default.glsl");
         shader.compile();
 
-
-        addGameObject(new Cube(new Transform(new Vector3f(0, 0, 0f), new Vector3f(1, 1, 1), new Vector3f(1.0f, 2.0f, 1.0f)), "assets/textures/block/oak_planks.png", this));
-        addGameObject(new Rectangle(new Transform(new Vector3f(-1.5f, -1.5f, 0f), new Vector3f(1, 1, 1), new Vector3f(2.0f, 1.0f, 1.0f)), "assets/textures/block/deepslate_diamond_ore.png", this));
-
         return shader;
 
     }

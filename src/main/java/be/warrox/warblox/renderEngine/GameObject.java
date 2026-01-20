@@ -46,6 +46,14 @@ public abstract class GameObject {
         shader.uploadMat4f("model", this.transform.getModelMatrix());
         shader.uploadMat4f("projection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
 
+        if (texture != null) {
+            shader.uploadBool("useTexture", true);
+        } else {
+            shader.uploadBool("useTexture", false);
+            shader.uploadVec4f("ourColor", color);
+        }
+
+
         glBindVertexArray(vao);
         if (this.texture != null) this.texture.bind();
 
@@ -57,6 +65,6 @@ public abstract class GameObject {
     }
 
     public void update() {
-        //this.transform.rotate(new Vector3f(0.5f, 0.5f, 0.5f));
+
     }
 }
