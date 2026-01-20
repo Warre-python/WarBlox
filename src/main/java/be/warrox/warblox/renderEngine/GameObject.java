@@ -44,7 +44,7 @@ public abstract class GameObject {
     public void render(Shader shader, Camera camera) {
         shader.uploadMat4f("view", camera.getViewMatrix());
         shader.uploadMat4f("model", this.transform.getModelMatrix());
-        shader.uploadMat4f("projection", Transform.getProjectionMatrix(Window.width, Window.height));
+        shader.uploadMat4f("projection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
 
         glBindVertexArray(vao);
         if (this.texture != null) this.texture.bind();

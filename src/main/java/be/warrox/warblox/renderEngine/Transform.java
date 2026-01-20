@@ -30,8 +30,8 @@ public class Transform {
                 .scale(scale);
     }
 
-    public static Matrix4f getProjectionMatrix(float width, float height) {
-        float fov = (float) Math.toRadians(45.0f);
+    public static Matrix4f getProjectionMatrix(float width, float height, Camera camera) {
+        float fov = camera.getFov();
         float aspectRatio = width / height;
         float nearPlane = 0.1f;
         float farPlane = 1000.0f;

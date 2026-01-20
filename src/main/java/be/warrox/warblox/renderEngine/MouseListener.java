@@ -28,8 +28,8 @@ public class MouseListener {
     }
 
     public static void mousePosCallback(long window, double xpos, double ypos) {
-        get().lastX = get().xPos;
-        get().lastY = get().yPos;
+        // REMOVED: get().lastX = get().xPos;
+        // REMOVED: get().lastY = get().yPos;
         get().xPos = xpos;
         get().yPos = ypos;
         get().isDragging = get().mouseButtonPressed[0] || get().mouseButtonPressed[1] || get().mouseButtonPressed[2];
@@ -56,6 +56,7 @@ public class MouseListener {
     public static void endFrame() {
         get().scrollX = 0;
         get().scrollY = 0;
+        // lastX/Y are ONLY updated here, after the Camera has read them
         get().lastX = get().xPos;
         get().lastY = get().yPos;
     }
@@ -69,13 +70,11 @@ public class MouseListener {
     }
 
     public static float getDx() {
-        float dx = (float)(get().xPos - get().lastX);
-        return dx;
+        return (float)(get().xPos - get().lastX);
     }
 
     public static float getDy() {
-        float dy = (float)(get().yPos - get().lastY);
-        return dy;
+        return (float)(get().yPos - get().lastY);
     }
 
     public static float getScrollX() {

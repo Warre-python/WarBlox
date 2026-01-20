@@ -67,6 +67,9 @@ public class Window {
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, KeyListener::keyCallback);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(window, MouseListener::mousePosCallback);
+        glfwSetScrollCallback(window, MouseListener::mouseScrollCallback);
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
