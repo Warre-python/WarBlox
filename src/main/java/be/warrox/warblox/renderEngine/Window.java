@@ -1,5 +1,6 @@
 package be.warrox.warblox.renderEngine;
 
+import be.warrox.warblox.game.Game;
 import be.warrox.warblox.renderEngine.Camera;
 import org.joml.Vector3f;
 import org.lwjgl.Version;
@@ -23,6 +24,7 @@ public class Window {
     private Shader shader;
     private RenderBatch renderBatch;
     private Camera camera;
+    private Game game;
 
     private static Window instance = null;
 
@@ -105,10 +107,8 @@ public class Window {
         // bindings available for use.
         GL.createCapabilities();
 
-        camera = new Camera(new Vector3f(0.0f, 0.0f, 3.0f));
-        renderBatch = new RenderBatch();
-        shader = renderBatch.start();
-        shader.uploadTexture("ourTexture", 0);
+        game = new Game();
+        game.init();
     }
 
     private void loop() {
@@ -128,9 +128,8 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
 
+            game.update(deltaTime);
 
-            camera.update(deltaTime);
-            renderBatch.render(shader, camera);
 
             float currentFrame = (float)glfwGetTime();
             deltaTime = currentFrame - lastFrame;
