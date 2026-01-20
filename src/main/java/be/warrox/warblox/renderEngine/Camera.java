@@ -10,9 +10,9 @@ import static org.joml.Math.sin;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Camera {
-    private Vector3f position;
-    private Vector3f up;
-    private Vector3f front;
+    public Vector3f position;
+    public Vector3f up;
+    public Vector3f front;
 
     private Vector3f direction = new Vector3f();
     private float yaw;

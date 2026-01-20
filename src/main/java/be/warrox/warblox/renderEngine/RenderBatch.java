@@ -1,6 +1,7 @@
 package be.warrox.warblox.renderEngine;
 
 import be.warrox.warblox.game.objects.Cube;
+import be.warrox.warblox.game.objects.Player;
 import be.warrox.warblox.game.objects.Rectangle;
 import org.joml.Vector3f;
 
@@ -66,7 +67,6 @@ public class RenderBatch {
 
 
         for (GameObject go : gameObjects) {
-            go.update();
             go.render(shader, camera);
         }
 
@@ -77,6 +77,10 @@ public class RenderBatch {
 
     public void addGameObject(GameObject go) {
         this.gameObjects.add(go);
+    }
+
+    public List<GameObject> getGameObjects() {
+        return gameObjects;
     }
 
     public int setupMesh(float[] vertices, int[] indices) {
