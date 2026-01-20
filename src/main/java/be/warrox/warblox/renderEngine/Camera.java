@@ -84,8 +84,6 @@ public class Camera {
         if (fov > 45.0f)
             fov = 45.0f;
 
-        System.out.println(fov);
-
     }
 
     public float getFov() {
