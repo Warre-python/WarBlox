@@ -1,12 +1,13 @@
-package be.warrox.warblox.game.objects;
+package be.warrox.warblox.game.objects.entities;
 
+import be.warrox.warblox.game.objects.Cube;
 import be.warrox.warblox.renderEngine.Camera;
 import be.warrox.warblox.renderEngine.RenderBatch;
 import be.warrox.warblox.renderEngine.Transform;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class Player extends Cube{
+public class Player extends Cube {
     private Transform transform;
     public Player(Transform transform, Vector4f color, RenderBatch rb) {
         super(transform, color, rb);

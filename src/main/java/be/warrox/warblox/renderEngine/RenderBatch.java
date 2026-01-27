@@ -1,10 +1,5 @@
 package be.warrox.warblox.renderEngine;
 
-import be.warrox.warblox.game.objects.Cube;
-import be.warrox.warblox.game.objects.Player;
-import be.warrox.warblox.game.objects.Rectangle;
-import org.joml.Vector3f;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +10,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class RenderBatch {
-    private int vboID, vaoID, eboID;
+    private int vbo, vao, ebo;
     private List<GameObject> gameObjects = new ArrayList<>();
     private Texture texture = new Texture("assets/textures/block/deepslate_diamond_ore.png");
 
@@ -33,17 +28,17 @@ public class RenderBatch {
         float[] vertices = Primitives.cubeVertices;
         int[] indices = Primitives.cubeIndices;
         // Generate and bind a Vertex Array Object
-        vaoID = glGenVertexArrays();
-        glBindVertexArray(vaoID);
+        vao = glGenVertexArrays();
+        glBindVertexArray(vao);
 
         // Allocate space for vertices
-        vboID = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
 
-        eboID = glGenBuffers();
+        ebo = glGenBuffers();
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
 

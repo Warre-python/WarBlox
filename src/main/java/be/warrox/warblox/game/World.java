@@ -1,8 +1,7 @@
 package be.warrox.warblox.game;
 
 import be.warrox.warblox.game.objects.Cube;
-import be.warrox.warblox.game.objects.Player;
-import be.warrox.warblox.game.objects.Rectangle;
+import be.warrox.warblox.game.objects.entities.Player;
 import be.warrox.warblox.renderEngine.Camera;
 import be.warrox.warblox.renderEngine.GameObject;
 import be.warrox.warblox.renderEngine.RenderBatch;

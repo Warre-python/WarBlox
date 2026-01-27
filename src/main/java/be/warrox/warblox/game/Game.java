@@ -1,9 +1,9 @@
 package be.warrox.warblox.game;
 
-import be.warrox.warblox.renderEngine.Camera;
+
 import be.warrox.warblox.renderEngine.RenderBatch;
 import be.warrox.warblox.renderEngine.Shader;
-import org.joml.Vector3f;
+
 
 public class Game {
     private World world;
