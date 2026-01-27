@@ -21,7 +21,7 @@ public class Game {
 
     public void update(float deltaTime) {
         world.update(deltaTime);
-        rb.render(shader, world.getCamera());
+        rb.render(shader, world.getCamera(), world.getLightPos());
 
     }
 

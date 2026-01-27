@@ -1,5 +1,7 @@
 package be.warrox.warblox.renderEngine;
 
+import org.joml.Vector3f;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +19,14 @@ public class RenderBatch {
     private final int POS_SIZE = 3;
     //private final int COLOR_SIZE = 3;
     private final int TEXCOORDS_SIZE = 2;
+    private final int NORMAL_SIZE = 3;
 
     private final int POS_OFFSET = 0;
     //private final int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
     private final int TEXCOORDS_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
-    private final int VERTEX_SIZE = 5;
+    private final int NORMAL_OFFSET = TEXCOORDS_OFFSET + TEXCOORDS_SIZE * Float.BYTES;
+
+    private final int VERTEX_SIZE = 8;
     private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
     public Shader start() {
@@ -48,21 +53,24 @@ public class RenderBatch {
         glVertexAttribPointer(1, TEXCOORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEXCOORDS_OFFSET);
         glEnableVertexAttribArray(1);
 
+        glVertexAttribPointer(2, NORMAL_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, NORMAL_OFFSET);
+        glEnableVertexAttribArray(2);
 
-        Shader shader = new Shader("assets/shaders/default.glsl");
+
+        Shader shader = new Shader("assets/shaders/lightShader.glsl");
         shader.compile();
 
         return shader;
 
     }
 
-    public void render(Shader shader, Camera camera) {
+    public void render(Shader shader, Camera camera, Vector3f lightPos) {
         shader.use();
 
 
 
         for (GameObject go : gameObjects) {
-            go.render(shader, camera);
+            go.render(shader, camera, lightPos);
         }
 
 
@@ -92,6 +100,8 @@ public class RenderBatch {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, TEXCOORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEXCOORDS_OFFSET);
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, NORMAL_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, NORMAL_OFFSET);
+        glEnableVertexAttribArray(2);
         return vao;
     }
 

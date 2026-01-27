@@ -20,4 +20,5 @@ public class Cube extends GameObject {
     public void update(Camera camera) {
 
     }
+
 }

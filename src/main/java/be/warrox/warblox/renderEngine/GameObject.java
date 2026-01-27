@@ -41,16 +41,25 @@ public abstract class GameObject {
         vao = rb.setupMesh(vertices, indices);
     }
 
-    public void render(Shader shader, Camera camera) {
+    public void render(Shader shader, Camera camera, Vector3f lightPos) {
+        Matrix4f model = this.transform.getModelMatrix();
+
         shader.uploadMat4f("view", camera.getViewMatrix());
-        shader.uploadMat4f("model", this.transform.getModelMatrix());
+        shader.uploadMat4f("model", model);
         shader.uploadMat4f("projection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
+
+        shader.uploadVec3f("lightPos", lightPos);
+
+        shader.uploadFloat("ambientStrength", 0.2f);
+
+
+        shader.uploadVec3f("objectColor", new Vector3f(color.x, color.y, color.z));
+        shader.uploadVec3f("lightColor",  new Vector3f(1.0f, 1.0f, 1.0f));
 
         if (texture != null) {
             shader.uploadBool("useTexture", true);
         } else {
             shader.uploadBool("useTexture", false);
-            shader.uploadVec4f("ourColor", color);
         }
 
 
@@ -66,5 +75,9 @@ public abstract class GameObject {
 
     public void update() {
 
+    }
+
+    public Transform getTransform() {
+        return this.transform;
     }
 }
