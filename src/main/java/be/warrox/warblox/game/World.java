@@ -31,6 +31,8 @@ public class World {
 
         addBlock(new Cube(new Transform(new Vector3f(0, 10, 1), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(0, 0, 1, 1), rb));
 
+        addBlock(new Cube(new Transform(new Vector3f(0, 10, 7), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), "assets/textures/block/big_dripleaf_stem.png", rb));
+
         addBlock(new Cube(new Transform(lightPos, new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(1, 1, 1, 1), rb));
     }
 

@@ -56,6 +56,8 @@ public abstract class GameObject {
         shader.uploadVec3f("objectColor", new Vector3f(color.x, color.y, color.z));
         shader.uploadVec3f("lightColor",  new Vector3f(1.0f, 1.0f, 1.0f));
 
+        shader.uploadVec3f("viewPos", camera.position);
+
         if (texture != null) {
             shader.uploadBool("useTexture", true);
         } else {
