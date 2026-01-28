@@ -60,28 +60,25 @@ uniform vec3 viewPos;
 
 void main()
 {
-    // Normalize vectors
+    // The color of the object's surface, from a texture or a solid color.
+    vec3 surfaceColor = useTexture ? texture(ourTexture, TexCoord).rgb : objectColor;
+
+    // Ambient lighting
+    vec3 ambient = light.ambient * surfaceColor;
+
+    // Diffuse lighting
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(light.position - FragPos);
-    vec3 viewDir  = normalize(viewPos - FragPos);
-
-    // Ambient
-    vec3 ambient = vec3(0.1) * (light.ambient * material.ambient * light.color);
-
-    // Diffuse
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = vec3(1.0) * ((diff * light.diffuse * material.diffuse) * light.color);
+    vec3 diffuse = light.diffuse * diff * surfaceColor;
 
-    // Specular
+    // Specular lighting
+    vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = vec3(1.0) * (material.specular * spec * light.color);
+    vec3 specular = light.specular * spec * material.specular; // Specular highlight is often not colored by object color
 
-    vec3 baseColor = useTexture
-    ? texture(ourTexture, TexCoord).rgb
-    : objectColor;
-
-    vec3 result = (ambient + diffuse + specular) * baseColor;
+    vec3 result = (ambient + diffuse) * light.color + specular * light.color;
     FragColor = vec4(result, 1.0);
 }
 

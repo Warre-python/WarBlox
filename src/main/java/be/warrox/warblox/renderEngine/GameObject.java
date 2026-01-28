@@ -1,5 +1,6 @@
 package be.warrox.warblox.renderEngine;
 
+import be.warrox.warblox.game.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -11,9 +12,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public abstract class GameObject {
-    private Vector4f color;
-    private Texture texture;
-    private Transform transform;
+    public Vector4f color;
+    public Texture texture;
+    public Transform transform;
 
     protected int elementCount;
     private float[] vertices;
@@ -43,7 +44,7 @@ public abstract class GameObject {
         vao = rb.setupMesh(vertices, indices);
     }
 
-    public void render(Shader shader, Camera camera, Vector3f lightPos) {
+    public void render(Shader shader, Camera camera, World world) {
         Matrix4f model = this.transform.getModelMatrix();
 
         shader.uploadMat4f("view", camera.getViewMatrix());
@@ -56,19 +57,12 @@ public abstract class GameObject {
         shader.uploadVec3f("material.specular", new Vector3f(0.5f, 0.5f, 0.5f));
         shader.uploadFloat("material.shininess", 32.0f);
 
-        Vector3f lightColor = new Vector3f();
-        lightColor.x = (float) sin(glfwGetTime() * 2.0f);
-        lightColor.y = (float) sin(glfwGetTime() * 0.7f);
-        lightColor.z = (float) sin(glfwGetTime() * 1.3f);
 
-        Vector3f diffuseColor = lightColor.add(new Vector3f(0.5f));
-        Vector3f ambientColor = diffuseColor.add(new Vector3f(0.2f));
-
-        shader.uploadVec3f("light.ambient",  ambientColor);
-        shader.uploadVec3f("light.diffuse",  diffuseColor);
+        shader.uploadVec3f("light.ambient",  new Vector3f(0.2f, 0.2f, 0.2f));
+        shader.uploadVec3f("light.diffuse",  new Vector3f(0.5f, 0.5f, 0.5f));
         shader.uploadVec3f("light.specular", new Vector3f(1.0f, 1.0f, 1.0f));
-        shader.uploadVec3f("light.position", lightPos);
-        shader.uploadVec3f("light.color", new Vector3f(color.x, color.y, color.z));
+        shader.uploadVec3f("light.position", world.lightSource.getTransform().position);
+        shader.uploadVec3f("light.color", new Vector3f(world.lightSource.color.x, world.lightSource.color.y, world.lightSource.color.z));
 
 
         shader.uploadVec3f("objectColor", new Vector3f(color.x, color.y, color.z));

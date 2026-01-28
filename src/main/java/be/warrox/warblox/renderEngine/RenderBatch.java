@@ -1,5 +1,6 @@
 package be.warrox.warblox.renderEngine;
 
+import be.warrox.warblox.game.World;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -64,13 +65,13 @@ public class RenderBatch {
 
     }
 
-    public void render(Shader shader, Camera camera, Vector3f lightPos) {
+    public void render(Shader shader, Camera camera, World world) {
         shader.use();
 
 
 
         for (GameObject go : gameObjects) {
-            go.render(shader, camera, lightPos);
+            go.render(shader, camera, world);
         }
 
 
