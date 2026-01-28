@@ -13,7 +13,7 @@ public class World {
     private RenderBatch rb;
     private Camera camera;
     private Player player;
-    private Vector3f lightPos = new Vector3f(0, 20, 20);
+    private Vector3f lightPos = new Vector3f(10, 20, 14);
 
 
     public World(RenderBatch rb) {
@@ -27,11 +27,11 @@ public class World {
         rb.addGameObject(player);
 
 
-        addBlock(new Cube(new Transform(new Vector3f(0, 10, 4), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(0, 1, 0, 1), rb));
+        addBlock(new Cube(new Transform(new Vector3f(0, 10, 4), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(1, 1, 1, 1), rb));
 
-        addBlock(new Cube(new Transform(new Vector3f(0, 10, 1), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(0, 0, 1, 1), rb));
+        addBlock(new Cube(new Transform(new Vector3f(0, 10, 1), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(1, 1, 1, 1), rb));
 
-        addBlock(new Cube(new Transform(new Vector3f(0, 10, 7), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), "assets/textures/block/big_dripleaf_stem.png", rb));
+        addBlock(new Cube(new Transform(new Vector3f(0, 10, 7), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), "assets/textures/block/diamond_block.png", rb));
 
         addBlock(new Cube(new Transform(lightPos, new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(1, 1, 1, 1), rb));
     }

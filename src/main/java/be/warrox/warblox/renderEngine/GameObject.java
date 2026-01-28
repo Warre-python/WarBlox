@@ -1,9 +1,11 @@
 package be.warrox.warblox.renderEngine;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import static java.lang.Math.sin;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -48,13 +50,29 @@ public abstract class GameObject {
         shader.uploadMat4f("model", model);
         shader.uploadMat4f("projection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
 
-        shader.uploadVec3f("lightPos", lightPos);
 
-        shader.uploadFloat("ambientStrength", 0.2f);
+        shader.uploadVec3f("material.ambient", new Vector3f(1.0f, 0.5f, 0.31f));
+        shader.uploadVec3f("material.diffuse", new Vector3f(1.0f, 0.5f, 0.31f));
+        shader.uploadVec3f("material.specular", new Vector3f(0.5f, 0.5f, 0.5f));
+        shader.uploadFloat("material.shininess", 32.0f);
+
+        Vector3f lightColor = new Vector3f();
+        lightColor.x = (float) sin(glfwGetTime() * 2.0f);
+        lightColor.y = (float) sin(glfwGetTime() * 0.7f);
+        lightColor.z = (float) sin(glfwGetTime() * 1.3f);
+
+        Vector3f diffuseColor = lightColor.add(new Vector3f(0.5f));
+        Vector3f ambientColor = diffuseColor.add(new Vector3f(0.2f));
+
+        shader.uploadVec3f("light.ambient",  ambientColor);
+        shader.uploadVec3f("light.diffuse",  diffuseColor);
+        shader.uploadVec3f("light.specular", new Vector3f(1.0f, 1.0f, 1.0f));
+        shader.uploadVec3f("light.position", lightPos);
+        shader.uploadVec3f("light.color", new Vector3f(color.x, color.y, color.z));
 
 
         shader.uploadVec3f("objectColor", new Vector3f(color.x, color.y, color.z));
-        shader.uploadVec3f("lightColor",  new Vector3f(1.0f, 1.0f, 1.0f));
+
 
         shader.uploadVec3f("viewPos", camera.position);
 
