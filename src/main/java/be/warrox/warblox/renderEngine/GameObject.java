@@ -64,6 +64,9 @@ public abstract class GameObject {
         shader.uploadVec3f("light.position", world.lightSource.getTransform().position);
         shader.uploadVec3f("light.color", new Vector3f(world.lightSource.color.x, world.lightSource.color.y, world.lightSource.color.z));
 
+        shader.uploadFloat("light.constant",  1.0f);
+        shader.uploadFloat("light.linear",    0.09f);
+        shader.uploadFloat("light.quadratic", 0.032f);
 
         shader.uploadVec3f("objectColor", new Vector3f(color.x, color.y, color.z));
 
