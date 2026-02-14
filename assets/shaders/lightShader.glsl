@@ -55,6 +55,8 @@ struct Light {
     float quadratic;
 };
 
+
+
 uniform Light light;
 
 uniform sampler2D ourTexture;
