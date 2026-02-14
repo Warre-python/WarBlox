@@ -58,7 +58,7 @@ public class RenderBatch {
         glEnableVertexAttribArray(2);
 
 
-        Shader shader = new Shader("assets/shaders/lightShader.glsl");
+        Shader shader = new Shader("assets/shaders/newLightShader.glsl");
         shader.compile();
 
         return shader;
