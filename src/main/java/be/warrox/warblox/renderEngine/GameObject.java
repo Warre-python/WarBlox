@@ -59,8 +59,8 @@ public abstract class GameObject {
 
 
         shader.uploadVec3f("light.ambient",  new Vector3f(0.2f, 0.2f, 0.2f));
-        shader.uploadVec3f("light.diffuse",  new Vector3f(0.5f, 0.5f, 0.5f));
-        shader.uploadVec3f("light.specular", new Vector3f(1.0f, 1.0f, 1.0f));
+        shader.uploadVec3f("light.diffuse", new Vector3f(5.0f, 5.0f, 5.0f));
+        shader.uploadVec3f("light.specular", new Vector3f(5.0f, 5.0f, 5.0f));
         shader.uploadVec3f("light.position", world.lightSource.getTransform().position);
         shader.uploadVec3f("light.color", new Vector3f(world.lightSource.color.x, world.lightSource.color.y, world.lightSource.color.z));
 

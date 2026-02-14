@@ -35,7 +35,7 @@ public class World {
         addBlock(new Cube(new Transform(new Vector3f(0, 10, 7), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), "assets/textures/block/diamond_block.png", rb));
 
 
-        this.lightSource = new LightSource(new Transform(new Vector3f(0, 20, 14), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(1, 1, 1, 1), rb);
+        this.lightSource = new LightSource(new Transform(new Vector3f(10, 20, 14), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)), new Vector4f(1, 1, 1, 1), rb);
         rb.addGameObject(lightSource);
 
     }
