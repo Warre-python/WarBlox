@@ -2,6 +2,7 @@ package be.warrox.warblox.game;
 
 import be.warrox.warblox.game.objects.Cube;
 import be.warrox.warblox.game.objects.LightSource;
+import be.warrox.warblox.game.objects.MyModel;
 import be.warrox.warblox.game.objects.entities.Player;
 import be.warrox.warblox.renderEngine.Camera;
 import be.warrox.warblox.renderEngine.GameObject;
@@ -116,6 +117,9 @@ public class World {
         // 7. Player
         this.player = new Player(new Transform(new Vector3f(0, 2, 10), new Vector3f(0, 0, 0), new Vector3f(1)), new Vector4f(0, 1, 0, 1), rb);
         rb.addGameObject(player);
+
+        //8. Model
+        addBlock(new MyModel(new Transform(new Vector3f(0, 2, 10), new Vector3f(0, 0, 0), new Vector3f(1)), "assets/models/backpack/backpack.obj", rb));
     }
 
 

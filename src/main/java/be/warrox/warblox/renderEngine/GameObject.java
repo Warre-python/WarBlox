@@ -25,6 +25,17 @@ public abstract class GameObject {
     private int[] indices;
     private int vao;
 
+    /**
+     * A protected constructor for GameObjects that handle their own rendering (e.g., Models).
+     * This constructor bypasses the default mesh setup.
+     */
+    protected GameObject(Transform transform) {
+        this.transform = transform;
+        this.color = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+        this.elementCount = 0;
+        this.vao = -1; // Indicates no VAO for this GameObject itself
+    }
+
 
     private List<Vector3f> pointLightPositions = new ArrayList<>();
 
@@ -40,7 +51,8 @@ public abstract class GameObject {
 
     public GameObject(Transform transform, String path, RenderBatch rb, float[] vertices, int[] indices) {
         this.transform = transform;
-        this.texture = new Texture(path);
+        // Updated to pass a default type "texture_diffuse"
+        this.texture = new Texture(path, "texture_diffuse");
         this.color = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         this.elementCount = indices.length;
         this.vertices = vertices;

@@ -37,10 +37,12 @@ public class Model {
             return;
         }
 
-        directory = path.substring(0, path.lastIndexOf(File.separator));
-        if (directory.isEmpty()) {
-             directory = path.substring(0, path.lastIndexOf('/'));
+        int lastSlash = path.lastIndexOf(File.separator);
+        if (lastSlash == -1) {
+            lastSlash = path.lastIndexOf('/');
         }
+
+        directory = (lastSlash != -1) ? path.substring(0, lastSlash) : "";
 
         processNode(scene.mRootNode(), scene);
     }
@@ -135,18 +137,7 @@ public class Model {
             // Assuming textures are in the same directory as the model or relative to it
             String fullPath = directory + "/" + textPath;
             
-            // NOTE: Texture constructor in your code takes (filepath), but doesn't set type.
-            // You might need to update Texture.java to allow setting type or set it here if possible.
-            // Your Texture.java has a 'type' field but the constructor takes 'type' as a parameter? 
-            // Wait, looking at Texture.java:
-            // public Texture(String filepath) { this.filepath = filepath; this.type = type; ... }
-            // 'type' is used in constructor but not passed in! It refers to the field itself which is null.
-            // I will assume for now we just create it and maybe we need to fix Texture.java later.
-            
-            Texture texture = new Texture(fullPath);
-            // We can't set type on Texture externally as it is private and no setter.
-            // We should probably fix Texture.java to accept type or have a setter.
-            // For now, I'll just add it.
+            Texture texture = new Texture(fullPath, typeName);
             
             textures.add(texture);
             textures_loaded.add(texture);
