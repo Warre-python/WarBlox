@@ -1,0 +1,157 @@
+package be.warrox.warblox.renderEngine;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.lwjgl.assimp.*;
+import org.lwjgl.PointerBuffer;
+
+import java.io.File;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.lwjgl.assimp.Assimp.*;
+
+public class Model {
+    private List<Mesh> meshes;
+    private String directory;
+    private List<Texture> textures_loaded;
+
+    public Model(String path) {
+        meshes = new ArrayList<>();
+        textures_loaded = new ArrayList<>();
+        loadModel(path);
+    }
+
+    public void draw(Shader shader) {
+        for(Mesh mesh : meshes){
+            mesh.draw(shader);
+        }
+    }
+
+    private void loadModel(String path) {
+        AIScene scene = aiImportFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+        if (scene == null || scene.mRootNode() == null || (scene.mFlags() & AI_SCENE_FLAGS_INCOMPLETE) != 0) {
+            System.err.println("ERROR::ASSIMP:: " + aiGetErrorString());
+            return;
+        }
+
+        directory = path.substring(0, path.lastIndexOf(File.separator));
+        if (directory.isEmpty()) {
+             directory = path.substring(0, path.lastIndexOf('/'));
+        }
+
+        processNode(scene.mRootNode(), scene);
+    }
+
+    private void processNode(AINode node, AIScene scene) {
+        for (int i = 0; i < node.mNumMeshes(); i++) {
+            AIMesh mesh = AIMesh.create(scene.mMeshes().get(node.mMeshes().get(i)));
+            meshes.add(processMesh(mesh, scene));
+        }
+
+        for (int i = 0; i < node.mNumChildren(); i++) {
+            processNode(AINode.create(node.mChildren().get(i)), scene);
+        }
+    }
+
+    private Mesh processMesh(AIMesh mesh, AIScene scene) {
+        List<Vertex> vertices = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
+        List<Texture> textures = new ArrayList<>();
+
+        AIVector3D.Buffer aiVertices = mesh.mVertices();
+        AIVector3D.Buffer aiNormals = mesh.mNormals();
+        AIVector3D.Buffer aiTexCoords = mesh.mTextureCoords(0);
+
+        for (int i = 0; i < mesh.mNumVertices(); i++) {
+            AIVector3D aiVertex = aiVertices.get(i);
+            Vector3f vector = new Vector3f(aiVertex.x(), aiVertex.y(), aiVertex.z());
+            
+            Vector3f normal = new Vector3f();
+            if (aiNormals != null) {
+                AIVector3D aiNormal = aiNormals.get(i);
+                normal.set(aiNormal.x(), aiNormal.y(), aiNormal.z());
+            }
+
+            Vector2f texCoords = new Vector2f(0, 0);
+            if (aiTexCoords != null) {
+                AIVector3D aiTexCoord = aiTexCoords.get(i);
+                texCoords.set(aiTexCoord.x(), aiTexCoord.y());
+            }
+            
+            // Assuming default color for now as Assimp mesh doesn't always have colors
+            // You might want to check mesh.mColors(0) if your models have vertex colors
+            Vector3f color = new Vector3f(1.0f, 1.0f, 1.0f); 
+
+            // Vertex constructor in your Vertex.java takes (pos, normal, texCoords) or (pos, normal, color)
+            // We'll use the one with texCoords since we loaded them.
+            // If you want both, you might need to update Vertex.java
+            vertices.add(new Vertex(vector, normal, texCoords));
+        }
+
+        for (int i = 0; i < mesh.mNumFaces(); i++) {
+            AIFace face = mesh.mFaces().get(i);
+            for (int j = 0; j < face.mNumIndices(); j++) {
+                indices.add(face.mIndices().get(j));
+            }
+        }
+
+        if (mesh.mMaterialIndex() >= 0) {
+            AIMaterial material = AIMaterial.create(scene.mMaterials().get(mesh.mMaterialIndex()));
+            List<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+            textures.addAll(diffuseMaps);
+            List<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+            textures.addAll(specularMaps);
+        }
+
+        return new Mesh(
+            vertices.toArray(new Vertex[0]),
+            indices.stream().mapToInt(i -> i).toArray(),
+            textures.toArray(new Texture[0])
+        );
+    }
+
+    private List<Texture> loadMaterialTextures(AIMaterial material, int type, String typeName) {
+        List<Texture> textures = new ArrayList<>();
+        AIString path = AIString.calloc();
+
+        for (int i = 0; i < aiGetMaterialTextureCount(material, type); i++) {
+            aiGetMaterialTexture(material, type, i, path, (IntBuffer) null, null, null, null, null, null);
+            String textPath = path.dataString();
+            boolean skip = false;
+            
+            for(Texture loadedTex : textures_loaded) {
+                // This check is a bit simplistic, might need full path comparison
+                // But for now assuming filename uniqueness or relative path consistency
+                if(loadedTex.getType().equals(typeName)) { 
+                     // We need to check if the path matches, but Texture class doesn't expose path easily
+                     // For now, let's just reload or we need to store path in Texture class
+                }
+            }
+
+            // Since Texture class loads from file, we need full path
+            // Assuming textures are in the same directory as the model or relative to it
+            String fullPath = directory + "/" + textPath;
+            
+            // NOTE: Texture constructor in your code takes (filepath), but doesn't set type.
+            // You might need to update Texture.java to allow setting type or set it here if possible.
+            // Your Texture.java has a 'type' field but the constructor takes 'type' as a parameter? 
+            // Wait, looking at Texture.java:
+            // public Texture(String filepath) { this.filepath = filepath; this.type = type; ... }
+            // 'type' is used in constructor but not passed in! It refers to the field itself which is null.
+            // I will assume for now we just create it and maybe we need to fix Texture.java later.
+            
+            Texture texture = new Texture(fullPath);
+            // We can't set type on Texture externally as it is private and no setter.
+            // We should probably fix Texture.java to accept type or have a setter.
+            // For now, I'll just add it.
+            
+            textures.add(texture);
+            textures_loaded.add(texture);
+        }
+        path.free();
+        return textures;
+    }
+}

@@ -94,8 +94,8 @@ public class Window {
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
-        // Enable v-sync
-        glfwSwapInterval(1);
+        // Disable v-sync
+        glfwSwapInterval(0);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -134,6 +134,8 @@ public class Window {
             float currentFrame = (float)glfwGetTime();
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
+
+            //System.out.println("FPS: " + (int)(1/deltaTime));
 
             glfwSwapBuffers(window); // swap the color buffers
 

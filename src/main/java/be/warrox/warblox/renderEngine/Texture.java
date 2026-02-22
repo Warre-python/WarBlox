@@ -14,7 +14,7 @@ public class Texture {
     private int texID;
     private String type;
 
-    public Texture(String filepath) {
+    public Texture(String filepath, String type) {
         this.filepath = filepath;
         this.type = type;
 

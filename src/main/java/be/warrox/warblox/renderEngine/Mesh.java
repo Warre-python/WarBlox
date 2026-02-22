@@ -43,7 +43,30 @@ public class Mesh {
     }
 
     public void draw(Shader shader) {
+        int diffuseNr = 1;
+        int specularNr = 1;
 
+        for(int i = 0; i < textures.length; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+
+            String number = "";
+            String name = textures[i].getType();
+
+            if(name.equals("texture_diffuse")) {
+                number = String.valueOf(diffuseNr++);
+
+            } else if(name.equals("texture_specular")) {
+                number = String.valueOf(specularNr++);
+            }
+
+            shader.uploadInt(("material." + name + number), i);
+            glBindTexture(GL_TEXTURE_2D, textures[i].getTexID());
+        }
+        glActiveTexture(GL_TEXTURE0);
+
+        glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
 
     private void setupMesh() {
