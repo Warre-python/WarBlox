@@ -21,16 +21,16 @@ public class Mesh {
     private int vbo, vao, ebo;
 
     private final int POS_SIZE = 3;
-    //private final int COLOR_SIZE = 3;
+    private final int COLOR_SIZE = 3;
     private final int TEXCOORDS_SIZE = 2;
     private final int NORMAL_SIZE = 3;
 
     private final int POS_OFFSET = 0;
-    //private final int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
     private final int NORMAL_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
     private final int TEXCOORDS_OFFSET = NORMAL_OFFSET + NORMAL_SIZE * Float.BYTES;
+    private final int COLOR_OFFSET = TEXCOORDS_OFFSET + TEXCOORDS_SIZE * Float.BYTES;
 
-    private final int VERTEX_SIZE = 8;
+    private final int VERTEX_SIZE = POS_SIZE + NORMAL_SIZE + TEXCOORDS_SIZE + COLOR_SIZE;
     private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
     public Mesh(Vertex[] vertices, int[] indices, Texture[] textures) {
@@ -71,6 +71,14 @@ public class Mesh {
             } else {
                 vertexBuffer.put(0.0f).put(0.0f);
             }
+
+            // Color
+            Vector3f color = vertex.getColor();
+            if (color != null) {
+                vertexBuffer.put(color.x).put(color.y).put(color.z);
+            } else {
+                vertexBuffer.put(1.0f).put(1.0f).put(1.0f);
+            }
         }
         vertexBuffer.flip();
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
@@ -85,6 +93,8 @@ public class Mesh {
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(2, TEXCOORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEXCOORDS_OFFSET);
         glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, COLOR_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, COLOR_OFFSET);
+        glEnableVertexAttribArray(3);
 
         glBindVertexArray(0);
     }

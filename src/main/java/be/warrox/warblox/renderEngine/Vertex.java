@@ -34,4 +34,8 @@ public class Vertex {
     public Vector2f getTexCoords() {
         return texCoords;
     }
+
+    public Vector3f getColor() {
+        return color;
+    }
 }
