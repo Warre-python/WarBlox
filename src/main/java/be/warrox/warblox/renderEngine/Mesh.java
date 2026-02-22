@@ -8,6 +8,11 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
+import org.lwjgl.BufferUtils;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import java.nio.FloatBuffer;
+
 public class Mesh {
     public Vertex[] vertices;
     public int[] indices;
@@ -22,8 +27,8 @@ public class Mesh {
 
     private final int POS_OFFSET = 0;
     //private final int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
-    private final int TEXCOORDS_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
-    private final int NORMAL_OFFSET = TEXCOORDS_OFFSET + TEXCOORDS_SIZE * Float.BYTES;
+    private final int NORMAL_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
+    private final int TEXCOORDS_OFFSET = NORMAL_OFFSET + NORMAL_SIZE * Float.BYTES;
 
     private final int VERTEX_SIZE = 8;
     private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
@@ -46,15 +51,41 @@ public class Mesh {
         glBindVertexArray(vao);
         vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+        // Create a FloatBuffer to send data to OpenGL
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertices.length * VERTEX_SIZE);
+        for (Vertex vertex : vertices) {
+            // Position
+            vertexBuffer.put(vertex.getPosition().x);
+            vertexBuffer.put(vertex.getPosition().y);
+            vertexBuffer.put(vertex.getPosition().z);
+
+            // Normal
+            Vector3f normal = vertex.getNormal();
+            vertexBuffer.put(normal.x).put(normal.y).put(normal.z);
+
+            // TexCoords
+            Vector2f texCoords = vertex.getTexCoords();
+            if (texCoords != null) {
+                vertexBuffer.put(texCoords.x).put(texCoords.y);
+            } else {
+                vertexBuffer.put(0.0f).put(0.0f);
+            }
+        }
+        vertexBuffer.flip();
+        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
+
         ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, POS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, POS_OFFSET);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, TEXCOORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEXCOORDS_OFFSET);
+        glVertexAttribPointer(1, NORMAL_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, NORMAL_OFFSET);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, NORMAL_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, NORMAL_OFFSET);
+        glVertexAttribPointer(2, TEXCOORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEXCOORDS_OFFSET);
         glEnableVertexAttribArray(2);
+
+        glBindVertexArray(0);
     }
 }

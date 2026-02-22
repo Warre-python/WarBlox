@@ -22,4 +22,16 @@ public class Vertex {
         this.texCoords = texCoords;
 
     }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public Vector3f getNormal() {
+        return normal;
+    }
+
+    public Vector2f getTexCoords() {
+        return texCoords;
+    }
 }
