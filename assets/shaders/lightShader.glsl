@@ -80,7 +80,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 baseColor)
 
     vec3 ambient  = light.ambient  * baseColor;
     vec3 diffuse  = light.diffuse  * diff * baseColor;
-    vec3 specular = light.specular * spec * baseColor;
+    vec3 specular = light.specular * spec; // Don't multiply by baseColor for non-metals
     return (ambient + diffuse + specular);
 }
 
@@ -95,9 +95,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
     // In CalcPointLight
-    vec3 ambient  = light.ambient * baseColor * 0.1; // Heel laag ambient
+    vec3 ambient  = light.ambient * baseColor; // Removed hardcoded 0.1
     vec3 diffuse  = light.diffuse * diff * baseColor;
-    vec3 specular = light.specular * spec * baseColor; // Specular zorgt voor die "glans"
+    vec3 specular = light.specular * spec; 
 
 
     return (ambient + diffuse + specular) * attenuation;
@@ -116,21 +116,20 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // Bepaal de basiskleur (Texture of Kleur)
-    vec3 baseColor;
+    vec4 baseColor; // Changed to vec4 to keep alpha
     if(useTexture) {
-        baseColor = vec3(texture(material.texture_diffuse1, TexCoord));
+        baseColor = texture(material.texture_diffuse1, TexCoord);
     } else {
-        baseColor = vec3(objectColor);
+        baseColor = objectColor;
     }
 
     // Phase 1: Directional lighting
-    vec3 result = CalcDirLight(dirLight, norm, viewDir, baseColor);
+    vec3 result = CalcDirLight(dirLight, norm, viewDir, baseColor.rgb);
 
     // Phase 2: Point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++) {
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir, baseColor);
+        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir, baseColor.rgb);
     }
 
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, baseColor.a);
 }
-
