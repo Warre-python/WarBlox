@@ -15,7 +15,6 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 public class RenderBatch {
     private int vbo, vao, ebo;
     private List<GameObject> gameObjects = new ArrayList<>();
-    private Texture texture = new Texture("assets/textures/block/deepslate_diamond_ore.png");
 
     private final int POS_SIZE = 3;
     //private final int COLOR_SIZE = 3;
@@ -58,7 +57,7 @@ public class RenderBatch {
         glEnableVertexAttribArray(2);
 
 
-        Shader shader = new Shader("assets/shaders/newLightShader.glsl");
+        Shader shader = new Shader("assets/shaders/lightShader.glsl");
         shader.compile();
 
         return shader;

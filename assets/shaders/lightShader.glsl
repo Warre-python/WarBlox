@@ -29,70 +29,105 @@ void main()
 #version 330 core
 out vec4 FragColor;
 
-in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in vec2 TexCoord; // Moet exact matchen met de Vertex Shader 'out'
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    sampler2D texture_diffuse1;
+    sampler2D texture_specular1;
     float shininess;
 };
 
-uniform Material material;
 
-struct Light {
-    vec3 position;
-    vec3 color;
-
+struct DirLight {
+    vec3 direction;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+};
 
+struct PointLight {
+    vec3 position;
     float constant;
     float linear;
     float quadratic;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 };
 
-
-
-uniform Light light;
-
-uniform sampler2D ourTexture;
-uniform bool useTexture;
-uniform vec3 objectColor;
+#define NR_POINT_LIGHTS 4
 uniform vec3 viewPos;
+uniform DirLight dirLight;
+uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform Material material;
+uniform bool useTexture;
+uniform vec4 objectColor; // Voor als er geen texture is
+uniform bool isLightSource;
+
+
+
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 baseColor)
+{
+    vec3 lightDir = normalize(-light.direction);
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
+    vec3 ambient  = light.ambient  * baseColor;
+    vec3 diffuse  = light.diffuse  * diff * baseColor;
+    vec3 specular = light.specular * spec * baseColor;
+    return (ambient + diffuse + specular);
+}
+
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 baseColor)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
+    float distance    = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+    // In CalcPointLight
+    vec3 ambient  = light.ambient * baseColor * 0.1; // Heel laag ambient
+    vec3 diffuse  = light.diffuse * diff * baseColor;
+    vec3 specular = light.specular * spec * baseColor; // Specular zorgt voor die "glans"
+
+
+    return (ambient + diffuse + specular) * attenuation;
+}
 
 void main()
 {
-    // The color of the object's surface, from a texture or a solid color.
-    vec3 surfaceColor = useTexture ? texture(ourTexture, TexCoord).rgb : objectColor;
 
-    // Ambient lighting
-    vec3 ambient = light.ambient * surfaceColor;
+    if(isLightSource) {
+        // Als het een lamp is, teken hem direct met zijn kleur zonder lichtberekening
+        FragColor = objectColor;
+        return;
+    }
 
-    // Diffuse lighting
     vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(light.position - FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * diff * surfaceColor;
-
-
-
-    // Specular lighting
     vec3 viewDir = normalize(viewPos - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * material.specular; // Specular highlight is often not colored by object color
 
-    float distance    = length(light.position - FragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    ambient  *= attenuation;
-    diffuse  *= attenuation;
-    specular *= attenuation;
+    // Bepaal de basiskleur (Texture of Kleur)
+    vec3 baseColor;
+    if(useTexture) {
+        baseColor = vec3(texture(material.texture_diffuse1, TexCoord));
+    } else {
+        baseColor = vec3(objectColor);
+    }
 
-    vec3 result = (ambient + diffuse) * light.color + specular * light.color;
+    // Phase 1: Directional lighting
+    vec3 result = CalcDirLight(dirLight, norm, viewDir, baseColor);
+
+    // Phase 2: Point lights
+    for(int i = 0; i < NR_POINT_LIGHTS; i++) {
+        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir, baseColor);
+    }
+
     FragColor = vec4(result, 1.0);
 }
 

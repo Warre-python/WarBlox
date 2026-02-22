@@ -12,9 +12,12 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
     private String filepath;
     private int texID;
+    private String type;
 
     public Texture(String filepath) {
         this.filepath = filepath;
+        this.type = type;
+
 
         // Generate texture on GPU
         texID = glGenTextures();
@@ -57,5 +60,9 @@ public class Texture {
 
     public void unbind() {
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public String getType() {
+        return type;
     }
 }
