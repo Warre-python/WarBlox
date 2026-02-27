@@ -12,16 +12,20 @@ import java.util.List;
 public class MyModel extends GameObject {
     private Model model;
     private List<Vector3f> pointLightPositions = new ArrayList<>();
+    private Vector4f color;
 
-    public MyModel(Transform transform, String path) {
+    public MyModel(Transform transform, String path, Vector4f color) {
         super(transform);
         this.model = new Model(path);
+        this.color = color;
         
         pointLightPositions.add(new Vector3f(0.7f,  0.2f,  2.0f));
         pointLightPositions.add(new Vector3f(2.3f, -3.3f, -4.0f));
         pointLightPositions.add(new Vector3f(-4.0f,  2.0f, -12.0f));
         pointLightPositions.add(new Vector3f(0.0f,  0.0f, -3.0f));
     }
+
+
 
     @Override
     public void render(Shader shader, Camera camera, World world) {
@@ -35,8 +39,8 @@ public class MyModel extends GameObject {
 
         shader.uploadVec3f("viewPos", camera.position);
         
-        // Default color if no texture, though Model handles textures
-        shader.uploadVec4f("objectColor", new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)); 
+        // Set object color to white (or any other color you want)
+        shader.uploadVec4f("objectColor", color);
 
         // Directional Light
         shader.uploadVec3f("dirLight.direction", new Vector3f(-0.2f, -1.0f, -0.3f));
@@ -59,7 +63,8 @@ public class MyModel extends GameObject {
         shader.uploadFloat("material.shininess", 32.0f);
         shader.uploadBool("isLightSource", false);
         
-        shader.uploadBool("useTexture", true);
+        // Disable texture usage
+        shader.uploadBool("useTexture", false);
 
         model.draw(shader);
     }

@@ -117,7 +117,17 @@ public class World {
         this.player = new Player(new Transform(new Vector3f(0, 2, 10), new Vector3f(0, 0, 0), new Vector3f(1)), new Vector4f(0, 1, 0, 1));
         rb.addGameObject(player);
 
-        
+        // 8. Backpack Model
+        addBlock(new MyModel(
+                new Transform(new Vector3f(0, 2, 0), new Vector3f(0), new Vector3f(1)),
+                "assets/models/backpack/backpack.obj", new Vector4f(0.0f, 1.0f, 0.0f, 1.0f)
+        ));
+
+        // 8. Car Model
+        addBlock(new MyModel(
+                new Transform(new Vector3f(-2.5f, 0, 0), new Vector3f(0), new Vector3f(1)),
+                "assets/models/Datsun_280Z.obj", new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)
+        ));
     }
 
 

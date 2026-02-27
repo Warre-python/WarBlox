@@ -13,14 +13,13 @@ public class Vertex {
         this.position = position;
         this.normal = normal;
         this.color = color;
-
     }
 
     public Vertex(Vector3f position, Vector3f normal, Vector2f texCoords) {
         this.position = position;
         this.normal = normal;
         this.texCoords = texCoords;
-
+        this.color = new Vector3f(1.0f, 0.0f, 0.0f); // Default to black
     }
 
     public Vector3f getPosition() {
