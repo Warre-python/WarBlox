@@ -37,12 +37,16 @@ public class Model {
             return;
         }
 
-        int lastSlash = path.lastIndexOf(File.separator);
-        if (lastSlash == -1) {
-            lastSlash = path.lastIndexOf('/');
+        int lastSlashIndex = path.lastIndexOf(File.separator);
+        if (lastSlashIndex == -1) {
+            lastSlashIndex = path.lastIndexOf('/');
         }
 
-        directory = (lastSlash != -1) ? path.substring(0, lastSlash) : "";
+        if (lastSlashIndex != -1) {
+            directory = path.substring(0, lastSlashIndex);
+        } else {
+            directory = "";
+        }
 
         processNode(scene.mRootNode(), scene);
     }
@@ -83,13 +87,6 @@ public class Model {
                 texCoords.set(aiTexCoord.x(), aiTexCoord.y());
             }
             
-            // Assuming default color for now as Assimp mesh doesn't always have colors
-            // You might want to check mesh.mColors(0) if your models have vertex colors
-            Vector3f color = new Vector3f(1.0f, 1.0f, 1.0f); 
-
-            // Vertex constructor in your Vertex.java takes (pos, normal, texCoords) or (pos, normal, color)
-            // We'll use the one with texCoords since we loaded them.
-            // If you want both, you might need to update Vertex.java
             vertices.add(new Vertex(vector, normal, texCoords));
         }
 
@@ -125,20 +122,19 @@ public class Model {
             boolean skip = false;
             
             for(Texture loadedTex : textures_loaded) {
-                // This check is a bit simplistic, might need full path comparison
-                // But for now assuming filename uniqueness or relative path consistency
                 if(loadedTex.getType().equals(typeName)) { 
-                     // We need to check if the path matches, but Texture class doesn't expose path easily
-                     // For now, let's just reload or we need to store path in Texture class
+                     // Simple check, ideally check path too
                 }
             }
 
-            // Since Texture class loads from file, we need full path
-            // Assuming textures are in the same directory as the model or relative to it
-            String fullPath = directory + "/" + textPath;
-            
+            String fullPath;
+            if (directory.isEmpty()) {
+                fullPath = textPath;
+            } else {
+                fullPath = directory + "/" + textPath;
+            }
+
             Texture texture = new Texture(fullPath, typeName);
-            
             textures.add(texture);
             textures_loaded.add(texture);
         }

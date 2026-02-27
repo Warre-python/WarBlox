@@ -40,16 +40,16 @@ public abstract class GameObject {
     private List<Vector3f> pointLightPositions = new ArrayList<>();
 
 
-    public GameObject(Transform transform, Vector4f color, RenderBatch rb, float[] vertices, int[] indices) {
+    public GameObject(Transform transform, Vector4f color, float[] vertices, int[] indices) {
         this.transform = transform;
         this.color = color;
         this.elementCount = indices.length;
         this.vertices = vertices;
         this.indices = indices;
-        init(rb);
+        init();
     }
 
-    public GameObject(Transform transform, String path, RenderBatch rb, float[] vertices, int[] indices) {
+    public GameObject(Transform transform, String path, float[] vertices, int[] indices) {
         this.transform = transform;
         // Updated to pass a default type "texture_diffuse"
         this.texture = new Texture(path, "texture_diffuse");
@@ -57,11 +57,11 @@ public abstract class GameObject {
         this.elementCount = indices.length;
         this.vertices = vertices;
         this.indices = indices;
-        init(rb);
+        init();
     }
 
-    public void init(RenderBatch rb) {
-        vao = rb.setupMesh(vertices, indices);
+    public void init() {
+        vao = RenderBatch.setupMesh(vertices, indices);
 
         pointLightPositions.add(new Vector3f(0.7f,  0.2f,  2.0f));
         pointLightPositions.add(new Vector3f(2.3f, -3.3f, -4.0f));

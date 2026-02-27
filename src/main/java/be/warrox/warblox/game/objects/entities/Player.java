@@ -9,9 +9,9 @@ import org.joml.Vector4f;
 
 public class Player extends Cube {
 
-    public Player(Transform transform, Vector4f color, RenderBatch rb) {
+    public Player(Transform transform, Vector4f color) {
         // We roepen de Cube constructor aan die nu een Model genereert
-        super(transform, color, rb);
+        super(transform, color);
     }
 
     // Gebruik de update(camera) om de player 'vast' te maken aan de camera (First Person)

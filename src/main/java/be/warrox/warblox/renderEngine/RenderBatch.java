@@ -16,18 +16,18 @@ public class RenderBatch {
     private int vbo, vao, ebo;
     private List<GameObject> gameObjects = new ArrayList<>();
 
-    private final int POS_SIZE = 3;
+    private static final int POS_SIZE = 3;
     //private final int COLOR_SIZE = 3;
-    private final int TEXCOORDS_SIZE = 2;
-    private final int NORMAL_SIZE = 3;
+    private static final int TEXCOORDS_SIZE = 2;
+    private static final int NORMAL_SIZE = 3;
 
-    private final int POS_OFFSET = 0;
+    private static final int POS_OFFSET = 0;
     //private final int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
-    private final int TEXCOORDS_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
-    private final int NORMAL_OFFSET = TEXCOORDS_OFFSET + TEXCOORDS_SIZE * Float.BYTES;
+    private static final int TEXCOORDS_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
+    private static final int NORMAL_OFFSET = TEXCOORDS_OFFSET + TEXCOORDS_SIZE * Float.BYTES;
 
-    private final int VERTEX_SIZE = 8;
-    private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
+    private static final int VERTEX_SIZE = 8;
+    private static final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
     public Shader start() {
         float[] vertices = Primitives.cubeVertices;
@@ -86,7 +86,7 @@ public class RenderBatch {
         return gameObjects;
     }
 
-    public int setupMesh(float[] vertices, int[] indices) {
+    public static int setupMesh(float[] vertices, int[] indices) {
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
         int vbo = glGenBuffers();

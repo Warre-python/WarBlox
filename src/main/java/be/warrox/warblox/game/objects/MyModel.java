@@ -11,10 +11,9 @@ import java.util.List;
 
 public class MyModel extends GameObject {
     private Model model;
-    private Transform transform;
     private List<Vector3f> pointLightPositions = new ArrayList<>();
 
-    public MyModel(Transform transform, String path, RenderBatch rb) {
+    public MyModel(Transform transform, String path) {
         super(transform);
         this.model = new Model(path);
         
@@ -24,6 +23,7 @@ public class MyModel extends GameObject {
         pointLightPositions.add(new Vector3f(0.0f,  0.0f, -3.0f));
     }
 
+    @Override
     public void render(Shader shader, Camera camera, World world) {
         Matrix4f modelMatrix = this.transform.getModelMatrix();
 
@@ -59,31 +59,8 @@ public class MyModel extends GameObject {
         shader.uploadFloat("material.shininess", 32.0f);
         shader.uploadBool("isLightSource", false);
         
-        // Model.draw handles binding textures and setting "useTexture" if needed, 
-        // but wait, Mesh.draw sets "material.texture_diffuse1" etc.
-        // We need to ensure the shader expects what Mesh.draw provides.
-        // Mesh.draw sets uniforms like "material.texture_diffuse1".
-        // GameObject.render sets "useTexture".
-        // We might need to set "useTexture" to true if the model has textures.
-        // But Model has multiple meshes, some might have textures, some might not.
-        // Ideally Mesh.draw should handle this.
-        
-        // For now, let's assume the shader handles the uniforms set by Mesh.draw.
-        // If the shader uses "useTexture" boolean to toggle sampling, we need to set it.
-        // Mesh.draw doesn't set "useTexture".
-        // I'll update Mesh.draw in a future step if needed, but for now let's just call model.draw
-        
-        // Actually, looking at Mesh.java, it binds textures but doesn't set a "useTexture" flag.
-        // If the shader relies on "useTexture", we might have issues.
-        // However, standard Assimp shaders usually check if texture units are bound or use a different technique.
-        // Given GameObject uses "useTexture", the shader probably has an if statement.
-        // I'll set useTexture to true for now as the backpack has textures.
         shader.uploadBool("useTexture", true);
 
         model.draw(shader);
-    }
-    
-    public Transform getTransform() {
-        return transform;
     }
 }
