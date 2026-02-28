@@ -135,7 +135,7 @@ public class Window {
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            //System.out.println("FPS: " + (int)(1/deltaTime));
+            System.out.println("FPS: " + (int)(1/deltaTime));
 
             glfwSwapBuffers(window); // swap the color buffers
 

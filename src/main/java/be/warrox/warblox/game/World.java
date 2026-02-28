@@ -114,8 +114,8 @@ public class World {
         }
 
         // 7. Player
-        this.player = new Player(new Transform(new Vector3f(0, 2, 10), new Vector3f(0, 0, 0), new Vector3f(1)), new Vector4f(0, 1, 0, 1));
-        rb.addGameObject(player);
+        //this.player = new Player(new Transform(new Vector3f(0, 2, 10), new Vector3f(0, 0, 0), new Vector3f(1)), new Vector4f(0, 1, 0, 1));
+        //rb.addGameObject(player);
 
         // 8. Backpack Model
         addBlock(new MyModel(
@@ -141,9 +141,9 @@ public class World {
         camera.update(deltaTime); // Update eerst de camera (input)
 
         // Update de player op basis van de nieuwe camera positie
-        if (this.player != null) {
-            this.player.update(camera);
-        }
+        //if (this.player != null) {
+        //    this.player.update(camera);
+        //}
 
         // Update alle andere objecten
         for (GameObject go : rb.getGameObjects()) {
