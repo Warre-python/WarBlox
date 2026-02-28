@@ -95,13 +95,9 @@ public class Mesh {
                 vertexBuffer.put(0.0f).put(0.0f);
             }
 
-            // Color
-            Vector3f color = vertex.getColor();
-            if (color != null) {
-                vertexBuffer.put(color.x).put(color.y).put(color.z);
-            } else {
-                vertexBuffer.put(1.0f).put(1.0f).put(1.0f);
-            }
+
+            vertexBuffer.put(1.0f).put(1.0f).put(1.0f);
+
         }
         vertexBuffer.flip();
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);

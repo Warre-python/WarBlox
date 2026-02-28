@@ -19,7 +19,7 @@ public class Vertex {
         this.position = position;
         this.normal = normal;
         this.texCoords = texCoords;
-        this.color = new Vector3f(1.0f, 0.0f, 0.0f); // Default to black
+
     }
 
     public Vector3f getPosition() {
@@ -34,7 +34,4 @@ public class Vertex {
         return texCoords;
     }
 
-    public Vector3f getColor() {
-        return color;
-    }
 }
