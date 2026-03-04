@@ -1,18 +1,20 @@
 package be.warrox.warblox.game;
 
-import be.warrox.warblox.game.objects.Cube;
-import be.warrox.warblox.game.objects.LightSource;
-import be.warrox.warblox.game.objects.MyModel;
+import be.warrox.warblox.game.objects.*;
 import be.warrox.warblox.game.objects.entities.Player;
 import be.warrox.warblox.renderEngine.*;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.joml.Vector4f;
+
+import java.util.Map;
 
 public class World {
     private RenderBatch rb;
     private Camera camera;
     private Player player;
     public LightSource lightSource;
+    private Map<Position, Block> blocks;
 
 
     public World(RenderBatch rb) {
@@ -23,13 +25,7 @@ public class World {
         // 1. Camera setup
         this.camera = new Camera(new Vector3f(0, 6, 12));
 
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                for (int z = 0; z < 10; z++) {
-                    addBlock(new Cube(new Vector3f(x, y, z), new Color("blue")));
-                }
-            }
-        }
+        addBlock(new Block(new Position(0, 0, 0), BlockType.GRASS));
 
 
     }
