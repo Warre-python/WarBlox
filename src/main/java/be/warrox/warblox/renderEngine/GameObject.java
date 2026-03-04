@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public abstract class GameObject {
-    public Vector4f color;
+    public Color color;
     public Texture texture;
     public Transform transform;
 
@@ -31,7 +31,7 @@ public abstract class GameObject {
      */
     protected GameObject(Transform transform) {
         this.transform = transform;
-        this.color = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+        this.color = new Color("white");
         this.elementCount = 0;
         this.vao = -1; // Indicates no VAO for this GameObject itself
     }
@@ -40,7 +40,7 @@ public abstract class GameObject {
     private List<Vector3f> pointLightPositions = new ArrayList<>();
 
 
-    public GameObject(Transform transform, Vector4f color, float[] vertices, int[] indices) {
+    public GameObject(Transform transform, Color color, float[] vertices, int[] indices) {
         this.transform = transform;
         this.color = color;
         this.elementCount = indices.length;
@@ -53,7 +53,7 @@ public abstract class GameObject {
         this.transform = transform;
         // Updated to pass a default type "texture_diffuse"
         this.texture = new Texture(path, "texture_diffuse");
-        this.color = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+        this.color = new Color("white");
         this.elementCount = indices.length;
         this.vertices = vertices;
         this.indices = indices;
@@ -81,7 +81,7 @@ public abstract class GameObject {
         shader.uploadVec3f("viewPos", camera.position);
 
         shader.uploadVec3f("viewPos", camera.position);
-        shader.uploadVec4f("objectColor", this.color); // Upload de kleur van het object
+        shader.uploadVec4f("objectColor", this.color.getColorV4f()); // Upload de kleur van het object
 
         // Directional Light (Zon) - Belangrijk: anders zie je niks zonder pointlights
         shader.uploadVec3f("dirLight.direction", new Vector3f(-0.2f, -1.0f, -0.3f));

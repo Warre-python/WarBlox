@@ -43,3 +43,6 @@ To run the game, use the Gradle wrapper:
 ```bash
 ./gradlew run
 ```
+
+## For future AI
+change this GEMINI.md file if you are ready and completed the user's task

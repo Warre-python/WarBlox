@@ -3,6 +3,7 @@ package be.warrox.warblox.renderEngine;
 import be.warrox.warblox.game.Game;
 import be.warrox.warblox.renderEngine.Camera;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -113,7 +114,9 @@ public class Window {
 
     private void loop() {
         // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        Vector4f c = new Color("black").getColorV4f();
+        glClearColor(c.x, c.y, c.z, c.w);
+
         glEnable(GL_DEPTH_TEST);
 
         // Run the rendering loop until the user has attempted to close

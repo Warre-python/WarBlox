@@ -2,6 +2,7 @@ package be.warrox.warblox.game.objects.entities;
 
 import be.warrox.warblox.game.objects.Cube;
 import be.warrox.warblox.renderEngine.Camera;
+import be.warrox.warblox.renderEngine.Color;
 import be.warrox.warblox.renderEngine.RenderBatch;
 import be.warrox.warblox.renderEngine.Transform;
 import org.joml.Vector3f;
@@ -9,7 +10,7 @@ import org.joml.Vector4f;
 
 public class Player extends Cube {
 
-    public Player(Transform transform, Vector4f color) {
+    public Player(Transform transform, Color color) {
         // We roepen de Cube constructor aan die nu een Model genereert
         super(transform, color);
     }

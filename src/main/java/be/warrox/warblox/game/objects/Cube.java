@@ -13,8 +13,12 @@ public class Cube extends GameObject {
         super(new Transform(pos, new Vector3f(0, 0,0), new Vector3f(1, 1, 1)), path, Primitives.cubeVertices, Primitives.cubeIndices);
     }
 
-    public Cube(Transform transform, Vector4f color) {
+    public Cube(Transform transform, Color color) {
         super(transform, color, Primitives.cubeVertices, Primitives.cubeIndices);
+    }
+
+    public Cube(Vector3f pos, Color color) {
+        super(new Transform(pos, new Vector3f(0, 0,0), new Vector3f(1, 1, 1)), color, Primitives.cubeVertices, Primitives.cubeIndices);
     }
 
     public void update(Camera camera) {
