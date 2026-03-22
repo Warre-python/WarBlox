@@ -21,12 +21,21 @@ public class Renderer {
 
         // Initialize Shaders (You'll need to create this class next)
         sceneShader = new Shader("assets/shaders/3d.glsl");
+        sceneShader.compile();
     }
 
     public void clear() {
         // Clears the color and the depth buffer so previous frames don't "smear"
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
+
+    public void renderMesh(Mesh mesh) {
+        sceneShader.use();
+        mesh.draw();
+        sceneShader.detach();
+    }
+
+
 
 
 }
