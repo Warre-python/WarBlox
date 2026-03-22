@@ -1,36 +1,80 @@
 package be.warrox.engine.core;
 
+import be.warrox.engine.gfx.Renderer;
+import be.warrox.engine.scene.Scene;
 import be.warrox.game.IGame;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class Engine implements Runnable {
+
     private final Window window;
     private final IGame gameLogic;
+    private final Renderer renderer;
+    private final Scene scene;
 
-    public Engine(String title, int w, int h, IGame gameLogic) {
-        this.window = new Window(title, w, h);
+    // Time management variables
+    private double lastTime;
+
+    public Engine(String title, int w, int h, IGame gameLogic, boolean vsync) {
+        this.window = new Window(title, w, h, vsync);
         this.gameLogic = gameLogic;
+
+        // Initialize Engine-level components
+        this.renderer = new Renderer();
+        this.scene = new Scene();
     }
 
     @Override
     public void run() {
-        init();
-        gameLoop();
+        try {
+            init();
+            gameLoop();
+        } finally {
+            cleanup();
+        }
     }
 
     private void init() {
-        window.init(); // Creates the GLFW window
-        gameLogic.init(window); // Tells the game to load textures/models
+        window.init(); // Setup GLFW and OpenGL context
+        renderer.init(); // Setup shaders and global GL states
+
+        // The game's init now has access to the window to load assets
+        gameLogic.init(window);
+
+        lastTime = glfwGetTime();
     }
 
     private void gameLoop() {
+        float delta;
         while (!window.windowShouldClose()) {
-            // Update logic (Physics, Input)
-            gameLogic.update(getDeltaTime());
+            delta = getDeltaTime();
 
-            // Render logic
-            gameLogic.render(window);
+            // 1. Handle Input
+            gameLogic.input(window, scene);
 
-            window.update(); // Swap buffers and poll events
+            // 2. Update Physics/Logic
+            gameLogic.update(delta, scene);
+
+            // 3. Render
+            renderer.clear(); // Clears color and depth buffers
+
+            // The game decides WHAT to render using the engine's tools
+            gameLogic.render(renderer, scene);
+
+            // 4. Swap buffers & poll events
+            window.update();
         }
+    }
+
+    private float getDeltaTime() {
+        double currentTime = glfwGetTime();
+        float delta = (float) (currentTime - lastTime);
+        lastTime = currentTime;
+        return delta;
+    }
+
+    private void cleanup() {
+        window.cleanup();
+        // Add renderer or game cleanup if necessary
     }
 }
