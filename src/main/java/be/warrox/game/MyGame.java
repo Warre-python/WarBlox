@@ -1,22 +1,34 @@
 package be.warrox.game;
 
 import be.warrox.engine.core.Window;
+import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Renderer;
+import be.warrox.engine.gfx.Vertex;
 import be.warrox.engine.scene.Entity;
 import be.warrox.engine.scene.Scene;
 import be.warrox.game.world.World;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class MyGame implements IGame {
     private World world; // Your Voxel World
 
     @Override
     public void init(Window window) {
-        // We don't necessarily need to 'new' the scene here
-        // if the Engine already created one and passed it,
-        // but usually, the Game defines the world data.
-        world = new World();
-        world.generate();
+        // Inside MyGame.init()
+        Vertex[] vertices = new Vertex[] {
+                new Vertex(new Vector3f(-0.5f,  0.5f, 0.0f), new Vector4f(1, 0, 0, 1)), // Top Left (Red)
+                new Vertex(new Vector3f( 0.5f,  0.5f, 0.0f), new Vector4f(0, 1, 0, 1)), // Top Right (Green)
+                new Vertex(new Vector3f( 0.5f, -0.5f, 0.0f), new Vector4f(0, 0, 1, 1)), // Bottom Right (Blue)
+                new Vertex(new Vector3f(-0.5f, -0.5f, 0.0f), new Vector4f(1, 1, 1, 1))  // Bottom Left (White)
+        };
+
+        int[] indices = new int[] {
+                0, 1, 2,
+                2, 3, 0
+        };
+
+        Mesh myQuad = new Mesh(vertices, indices);
     }
 
     @Override
