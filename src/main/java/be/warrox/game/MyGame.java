@@ -19,9 +19,9 @@ public class MyGame implements IGame {
     public void init(Window window) {
         // Inside MyGame.init()
         Vertex[] vertices = new Vertex[] {
-                new Vertex(new Vector3f(-0.5f,  0.5f, 0.0f), new Vector4f(1, 1, 1, 1)), // Top Left (Red)
-                new Vertex(new Vector3f( 0.5f,  0.5f, 0.0f), new Vector4f(1, 1, 1, 1)), // Top Right (Green)
-                new Vertex(new Vector3f( 0.5f, -0.5f, 0.0f), new Vector4f(1, 1, 1, 1)), // Bottom Right (Blue)
+                new Vertex(new Vector3f(-0.5f,  0.5f, 0.0f), new Vector4f(1, 0, 0, 1)), // Top Left (Red)
+                new Vertex(new Vector3f( 0.5f,  0.5f, 0.0f), new Vector4f(0, 1, 0, 1)), // Top Right (Green)
+                new Vertex(new Vector3f( 0.5f, -0.5f, 0.0f), new Vector4f(0, 0, 1, 1)), // Bottom Right (Blue)
                 new Vertex(new Vector3f(-0.5f, -0.5f, 0.0f), new Vector4f(1, 1, 1, 1))  // Bottom Left (White)
         };
 
@@ -30,7 +30,7 @@ public class MyGame implements IGame {
                 2, 3, 0
         };
 
-        Mesh rectangle = new Mesh(vertices, indices);
+        rectangle = new Mesh(vertices, indices);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class MyGame implements IGame {
 
         // 2. Render the Entities (Assimp models) stored in the scene
         //renderer.renderEntities(scene);
-        if (rectangle != null) {
-            renderer.renderMesh(rectangle);
-        }
+
+        renderer.renderMesh(rectangle);
+
     }
 }

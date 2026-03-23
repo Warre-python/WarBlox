@@ -12,8 +12,8 @@ public class Renderer {
     public void init() {
         // Basic OpenGL state setup
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE); // Don't render backs of triangles
-        glCullFace(GL_BACK);
+        //glEnable(GL_CULL_FACE); // Don't render backs of triangles
+        //glCullFace(GL_BACK);
 
         // Setup Alpha Blending for 2D/Translucency
         glEnable(GL_BLEND);
