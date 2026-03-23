@@ -3,6 +3,7 @@ package be.warrox.game;
 import be.warrox.engine.core.Window;
 import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Renderer;
+import be.warrox.engine.gfx.Texture;
 import be.warrox.engine.gfx.Vertex;
 import be.warrox.engine.objects.Primitives;
 import be.warrox.engine.scene.Entity;
@@ -16,7 +17,7 @@ public class MyGame implements IGame {
 
     @Override
     public void init(Window window, Scene scene) {
-        scene.addObject(new Mesh(Primitives.verticesRectangle, Primitives.indicesRectangle));
+        scene.addObject(new Mesh(Primitives.verticesRectangleText, Primitives.indicesRectangleText, new Texture("assets/textures/block/grass_block_side.png", "texture")));
     }
 
     @Override
@@ -31,7 +32,7 @@ public class MyGame implements IGame {
 
     @Override
     public void render(Renderer renderer, Scene scene) {
-        scene.renderObjects();
+        scene.renderObjects(renderer.getShader());
 
     }
 }

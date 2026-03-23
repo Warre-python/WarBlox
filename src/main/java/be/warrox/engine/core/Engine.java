@@ -21,7 +21,7 @@ public class Engine implements Runnable {
 
         // Initialize Engine-level components
         this.renderer = new Renderer();
-        this.scene = new Scene();
+        this.scene = new Scene(this.renderer.getShader());
     }
 
     @Override

@@ -31,8 +31,12 @@ public class Renderer {
 
     public void renderMesh(Mesh mesh) {
         sceneShader.use();
-        mesh.draw();
+        mesh.draw(sceneShader);
         sceneShader.detach();
+    }
+
+    public Shader getShader() {
+        return sceneShader;
     }
 
 

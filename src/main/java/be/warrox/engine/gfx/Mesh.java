@@ -11,10 +11,16 @@ public class Mesh {
     private int eboId; // Index Buffer
     private int vertexCount;
 
-    public Mesh(Vertex[] vertices, int[] indices) {
+    private Texture texture;
+
+    public Mesh(Vertex[] vertices, int[] indices, Texture texture) {
         this.vertexCount = indices.length;
         FloatBuffer vertexBuffer = null;
         IntBuffer indexBuffer = null;
+
+        if (texture != null) {
+            this.texture = texture;
+        }
 
         try {
             vaoId = glGenVertexArrays();
@@ -70,9 +76,21 @@ public class Mesh {
         }
     }
 
-    public void draw() {
+    public void draw(Shader shader) {
+        if (texture != null) {
+            shader.uploadBool("useTexture", true);
+            glActiveTexture(GL_TEXTURE0);
+            texture.bind();
+            shader.uploadTexture("ourTexture", 0);
+        } else {
+            shader.uploadBool("useTexture", false);
+        }
         glBindVertexArray(vaoId);
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+
+        if (texture != null) {
+            texture.unbind();
+        }
     }
 }
