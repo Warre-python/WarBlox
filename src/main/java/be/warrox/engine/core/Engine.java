@@ -39,7 +39,7 @@ public class Engine implements Runnable {
         renderer.init(); // Setup shaders and global GL states
 
         // The game's init now has access to the window to load assets
-        gameLogic.init(window);
+        gameLogic.init(window, scene);
 
         lastTime = glfwGetTime();
     }
