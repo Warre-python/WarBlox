@@ -19,7 +19,7 @@ public class Window {
     private int height;
     private long windowHandle;
     private boolean resized;
-    private boolean vSync;
+    private final boolean vSync;
 
     public Window(String title, int width, int height, boolean vSync) {
         this.title = title;
@@ -62,6 +62,12 @@ public class Window {
             this.height = height;
             this.resized = true;
         });
+
+        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+        glfwSetKeyCallback(windowHandle, KeyListener::keyCallback);
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(windowHandle, MouseListener::mousePosCallback);
+        glfwSetScrollCallback(windowHandle, MouseListener::mouseScrollCallback);
 
         // Center the window on screen
         try (MemoryStack stack = stackPush()) {
