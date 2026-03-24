@@ -77,20 +77,18 @@ public class Mesh {
     }
 
     public void draw(Shader shader) {
-        if (texture != null) {
-            shader.uploadBool("useTexture", true);
-            glActiveTexture(GL_TEXTURE0);
-            texture.bind();
-            shader.uploadTexture("ourTexture", 0);
-        } else {
-            shader.uploadBool("useTexture", false);
-        }
+
         glBindVertexArray(vaoId);
+        if (this.texture != null) {
+            this.texture.bind();
+            shader.uploadBool("useTexture", true);
+        }
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
+        if (this.texture != null) {
+            this.texture.unbind();
+        }
         glBindVertexArray(0);
 
-        if (texture != null) {
-            texture.unbind();
-        }
+
     }
 }

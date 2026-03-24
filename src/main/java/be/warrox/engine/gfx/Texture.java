@@ -37,7 +37,7 @@ public class Texture {
         IntBuffer height = BufferUtils.createIntBuffer(1);
         IntBuffer channels = BufferUtils.createIntBuffer(1);
         stbi_set_flip_vertically_on_load(true);
-        ByteBuffer image = stbi_load(filepath, width, height, channels, 4);
+        ByteBuffer image = stbi_load(this.filepath, width, height, channels, 4);
 
         if (image != null) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.get(0), height.get(0),
