@@ -30,5 +30,22 @@ public class Primitives {
             1, 2, 3    // second triangle
     };
 
+    public Vertex[] vertices = new Vertex[] {
+            // Front face (Z = 0.5)
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(0, 0),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(1, 0),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(1, 1),
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(0, 1),
+
+            // Back face (Z = -0.5)
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(1, 0),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(0, 0),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(0, 1),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(1, 1),
+
+            // Add Top, Bottom, Left, Right faces similarly...
+            // (Note: To keep it short, I'll show the indices logic below)
+    };
+
 
 }

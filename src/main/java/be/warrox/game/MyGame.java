@@ -18,6 +18,7 @@ public class MyGame implements IGame {
 
     @Override
     public void init(Window window, Scene scene) {
+        //scene.addObject(new Object(new Mesh(Primitives.verticesRectangle, Primitives.indicesRectangle, new Vector4f(1, 0, 0, 1))));
         scene.addObject(new Object(new Mesh(Primitives.verticesRectangleText, Primitives.indicesRectangleText, new Texture("assets/textures/block/grass_block_side.png"))));
     }
 

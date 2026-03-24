@@ -4,6 +4,7 @@ import be.warrox.engine.scene.Transform;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -16,7 +17,24 @@ public class Mesh {
     private int vertexCount;
 
     private Texture texture;
+    private Vector4f meshColor;
+
+    // Constructor for Color-based Mesh
+    public Mesh(Vertex[] vertices, int[] indices, Vector4f color) {
+        this(vertices, indices, (Texture) null); // Call the main setup logic
+        this.meshColor = color;
+    }
+
+    // Constructor for Texture-based Mesh
     public Mesh(Vertex[] vertices, int[] indices, Texture texture) {
+        this.vertexCount = indices.length;
+        this.texture = texture;
+        this.meshColor = new Vector4f(1, 1, 1, 1); // Default to white (no tint)
+
+        setupMesh(vertices, indices);
+    }
+
+    private void setupMesh(Vertex[] vertices, int[] indices) {
         this.vertexCount = indices.length;
         FloatBuffer vertexBuffer = null;
         IntBuffer indexBuffer = null;
@@ -78,6 +96,7 @@ public class Mesh {
             if (indexBuffer != null) MemoryUtil.memFree(indexBuffer);
         }
     }
+
 
 
 
