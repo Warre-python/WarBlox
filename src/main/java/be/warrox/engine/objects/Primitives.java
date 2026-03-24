@@ -30,22 +30,54 @@ public class Primitives {
             1, 2, 3    // second triangle
     };
 
-    public Vertex[] vertices = new Vertex[] {
-            // Front face (Z = 0.5)
-            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(0, 0),
-            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(1, 0),
-            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(1, 1),
-            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector3f(0, 0, 1), new Vector2f(0, 1),
 
-            // Back face (Z = -0.5)
-            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(1, 0),
-            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(0, 0),
-            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(0, 1),
-            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector3f(0, 0, -1), new Vector2f(1, 1),
+    public static Vertex[] verticesCube = new Vertex[] {
+            // Front Face
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
 
-            // Add Top, Bottom, Left, Right faces similarly...
-            // (Note: To keep it short, I'll show the indices logic below)
+            // Back Face
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+
+            // Top Face
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
+
+            // Bottom Face
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+
+            // Left Face
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+
+            // Right Face
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
     };
+
+    public static int[] indicesCube = new int[] {
+            0, 1, 2, 2, 3, 0,       // Front
+            4, 5, 6, 6, 7, 4,       // Back
+            8, 9, 10, 10, 11, 8,    // Top
+            12, 13, 14, 14, 15, 12, // Bottom
+            16, 17, 18, 18, 19, 16, // Left
+            20, 21, 22, 22, 23, 20  // Right
+    };
+
 
 
 }

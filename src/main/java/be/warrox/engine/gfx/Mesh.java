@@ -124,6 +124,7 @@ public class Mesh {
 
 
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
+
         if (this.texture != null) {
             this.texture.unbind();
         }
