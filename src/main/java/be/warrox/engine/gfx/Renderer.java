@@ -1,8 +1,12 @@
 package be.warrox.engine.gfx;
 
+import be.warrox.engine.objects.Object;
 import be.warrox.engine.scene.Entity;
 import be.warrox.engine.scene.Scene;
 import org.lwjgl.opengl.GL11;
+
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
@@ -29,10 +33,10 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void renderMesh(Mesh mesh) {
-        sceneShader.use();
-        mesh.draw(sceneShader);
-        sceneShader.detach();
+    public void renderObjects(Shader shader, List<Object> objects) {
+        for (Object object : objects) {
+            object.draw(shader);
+        }
     }
 
     public Shader getShader() {

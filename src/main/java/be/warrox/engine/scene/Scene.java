@@ -2,21 +2,26 @@ package be.warrox.engine.scene;
 
 import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Shader;
+import be.warrox.engine.objects.Object;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scene {
-    private List<Mesh> objects = new ArrayList<Mesh>();
+    private List<Object> objects = new ArrayList<>();
 
     public Scene(Shader shader) {
     }
-
-    public void addObject(Mesh object) {
+    public void update() {
+        for (Object object : objects) {
+            object.update();
+        }
+    }
+    public void addObject(Object object) {
         objects.add(object);
     }
 
-    public List<Mesh> getObjects() {
+    public List<Object> getObjects() {
         return objects;
     }
 
@@ -24,9 +29,5 @@ public class Scene {
 
     }
 
-    public void renderObjects(Shader shader) {
-        for (Mesh object : objects) {
-            object.draw(shader);
-        }
-    }
+
 }

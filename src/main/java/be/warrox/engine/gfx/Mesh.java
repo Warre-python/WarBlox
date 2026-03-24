@@ -1,5 +1,9 @@
 package be.warrox.engine.gfx;
 
+import be.warrox.engine.scene.Transform;
+import org.joml.Math;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -12,7 +16,6 @@ public class Mesh {
     private int vertexCount;
 
     private Texture texture;
-
     public Mesh(Vertex[] vertices, int[] indices, Texture texture) {
         this.vertexCount = indices.length;
         FloatBuffer vertexBuffer = null;
@@ -76,13 +79,18 @@ public class Mesh {
         }
     }
 
-    public void draw(Shader shader) {
+
+
+    public void draw(Shader shader, Matrix4f transform) {
 
         glBindVertexArray(vaoId);
         if (this.texture != null) {
             this.texture.bind();
             shader.uploadBool("useTexture", true);
+
         }
+
+        shader.uploadMat4f("transform", transform);
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
         if (this.texture != null) {
             this.texture.unbind();
@@ -91,4 +99,6 @@ public class Mesh {
 
 
     }
+
+
 }
