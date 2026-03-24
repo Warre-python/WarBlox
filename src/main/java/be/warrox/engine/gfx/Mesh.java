@@ -81,7 +81,7 @@ public class Mesh {
 
 
 
-    public void draw(Shader shader, Matrix4f transform) {
+    public void draw(Shader shader) {
 
         glBindVertexArray(vaoId);
         if (this.texture != null) {
@@ -90,7 +90,20 @@ public class Mesh {
 
         }
 
-        shader.uploadMat4f("transform", transform);
+        Matrix4f model = new Matrix4f();
+        model.rotate(Math.toRadians(-55.0f), new Vector3f(1.0f, 0.0f, 0.0f));
+
+        Matrix4f view = new Matrix4f();
+        view.translate(new Vector3f(0.0f, 0.0f, -3.0f));
+
+        Matrix4f projection = new Matrix4f();
+        projection.perspective(Math.toRadians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+        shader.uploadMat4f("model", model);
+        shader.uploadMat4f("view", view);
+        shader.uploadMat4f("projection", projection);
+
+
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
         if (this.texture != null) {
             this.texture.unbind();
