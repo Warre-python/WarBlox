@@ -5,6 +5,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,16 +16,16 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class Window {
 
     private final String title;
-    private int width;
-    private int height;
+    public static int width;
+    public static int height;
     private long windowHandle;
     private boolean resized;
     private final boolean vSync;
 
     public Window(String title, int width, int height, boolean vSync) {
         this.title = title;
-        this.width = width;
-        this.height = height;
+        Window.width = width;
+        Window.height = height;
         this.vSync = vSync;
         this.resized = false;
     }
@@ -58,14 +59,14 @@ public class Window {
 
         // Setup resize callback
         glfwSetFramebufferSizeCallback(windowHandle, (window, width, height) -> {
-            this.width = width;
-            this.height = height;
+            Window.width = width;
+            Window.height = height;
             this.resized = true;
         });
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(windowHandle, KeyListener::keyCallback);
-        //glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPosCallback(windowHandle, MouseListener::mousePosCallback);
         glfwSetScrollCallback(windowHandle, MouseListener::mouseScrollCallback);
 
@@ -75,6 +76,7 @@ public class Window {
             IntBuffer pHeight = stack.mallocInt(1);
             glfwGetWindowSize(windowHandle, pWidth, pHeight);
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            assert vidmode != null;
             glfwSetWindowPos(windowHandle, (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2);
         }
 
@@ -110,8 +112,14 @@ public class Window {
     public void cleanup() {
         glfwFreeCallbacks(windowHandle);
         glfwDestroyWindow(windowHandle);
+
+        GLFWErrorCallback callback = glfwSetErrorCallback(null);
+        if (callback != null) {
+            callback.free();
+        }
+
         glfwTerminate();
-        glfwSetErrorCallback(null).free();
+
     }
 
     // Getters and Setters

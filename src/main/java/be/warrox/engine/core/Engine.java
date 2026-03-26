@@ -3,6 +3,8 @@ package be.warrox.engine.core;
 import be.warrox.engine.gfx.Renderer;
 import be.warrox.engine.scene.Scene;
 import be.warrox.game.IGame;
+
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class Engine implements Runnable {
@@ -50,7 +52,7 @@ public class Engine implements Runnable {
             delta = getDeltaTime();
 
             // 1. Handle Input
-            gameLogic.input(window, scene);
+            gameLogic.input(window, scene, delta);
 
             // 2. Update Physics/Logic
             gameLogic.update(delta, scene);
@@ -61,8 +63,15 @@ public class Engine implements Runnable {
             // The game decides WHAT to render using the engine's tools
             gameLogic.render(renderer, scene);
 
+            MouseListener.endFrame();
+
             // 4. Swap buffers & poll events
             window.update();
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
+                cleanup();
+                break;
+            }
         }
     }
 

@@ -9,6 +9,8 @@ import java.util.List;
 
 public class Scene {
     private List<Object> objects = new ArrayList<>();
+    private Camera camera;
+
 
     public Scene(Shader shader) {
     }
@@ -25,8 +27,13 @@ public class Scene {
         return objects;
     }
 
-    public void updateObjects() {
 
+    public void addCamera(Camera camera) {
+        this.camera = camera;
+    }
+
+    public Camera getCamere() {
+        return camera;
     }
 
 

@@ -1,5 +1,7 @@
 package be.warrox.engine.gfx;
 
+import be.warrox.engine.core.Window;
+import be.warrox.engine.scene.Camera;
 import be.warrox.engine.scene.Transform;
 import org.joml.Math;
 import org.joml.Matrix4f;
@@ -18,18 +20,20 @@ public class Mesh {
 
     private Texture texture;
     private Vector4f meshColor;
+    private Transform transform;
 
     // Constructor for Color-based Mesh
-    public Mesh(Vertex[] vertices, int[] indices, Vector4f color) {
-        this(vertices, indices, (Texture) null); // Call the main setup logic
+    public Mesh(Vertex[] vertices, int[] indices, Vector4f color, Transform transform) {
+        this(vertices, indices, (Texture) null, transform); // Call the main setup logic
         this.meshColor = color;
     }
 
     // Constructor for Texture-based Mesh
-    public Mesh(Vertex[] vertices, int[] indices, Texture texture) {
+    public Mesh(Vertex[] vertices, int[] indices, Texture texture, Transform transform) {
         this.vertexCount = indices.length;
         this.texture = texture;
         this.meshColor = new Vector4f(1, 1, 1, 1); // Default to white (no tint)
+        this.transform = transform;
 
         setupMesh(vertices, indices);
     }
@@ -100,7 +104,7 @@ public class Mesh {
 
 
 
-    public void draw(Shader shader) {
+    public void draw(Shader shader, Camera camera) {
 
         glBindVertexArray(vaoId);
         if (this.texture != null) {
@@ -118,9 +122,9 @@ public class Mesh {
         Matrix4f projection = new Matrix4f();
         projection.perspective(Math.toRadians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-        shader.uploadMat4f("model", model);
-        shader.uploadMat4f("view", view);
-        shader.uploadMat4f("projection", projection);
+        shader.uploadMat4f("uModel", this.transform.getModelMatrix());
+        shader.uploadMat4f("uView", camera.getViewMatrix());
+        shader.uploadMat4f("uProjection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
 
 
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);

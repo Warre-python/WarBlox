@@ -1,17 +1,15 @@
 package be.warrox.engine.gfx;
 
-import be.warrox.engine.objects.Object;
-import be.warrox.engine.scene.Entity;
+import be.warrox.engine.scene.Camera;
 import be.warrox.engine.scene.Scene;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-
-import java.util.List;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
 
     private Shader sceneShader;
+    private Matrix4f projectionMatrix = new Matrix4f();
 
     public void init() {
         // Basic OpenGL state setup
@@ -23,7 +21,7 @@ public class Renderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Initialize Shaders (You'll need to create this class next)
+        // Initialize Shaders
         sceneShader = new Shader("assets/shaders/3d.glsl");
         sceneShader.compile();
     }
@@ -33,17 +31,8 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void renderObjects(Shader shader, List<Object> objects) {
-        for (Object object : objects) {
-            object.draw(shader);
-        }
-    }
 
     public Shader getShader() {
         return sceneShader;
     }
-
-
-
-
 }

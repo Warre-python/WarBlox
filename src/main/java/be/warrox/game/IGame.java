@@ -6,7 +6,7 @@ import be.warrox.engine.scene.Scene;
 
 public interface IGame {
     void init(Window window, Scene scene);
-    void input(Window window, Scene scene);
+    void input(Window window, Scene scene, float delta);
     void update(float interval, Scene scene);
     void render(Renderer renderer, Scene scene);
 }
