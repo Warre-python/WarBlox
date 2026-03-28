@@ -10,35 +10,38 @@ import org.joml.Vector4f;
 import java.util.*;
 
 public class Chunk {
-    public static final int SIZE = 100;
+    public static final int SIZE = 16;
     private final byte[][][] blocks;
     private final Vector3f worldPosition;
 
     // We bewaren een map van Texture-naam -> Mesh
     private final Map<String, Mesh> subMeshes;
 
-    public Chunk(Vector3f worldPosition) {
+    private final World world;
+
+    public Chunk(Vector3f worldPosition, World world) {
         this.worldPosition = worldPosition;
         this.blocks = new byte[SIZE][SIZE][SIZE];
         this.subMeshes = new HashMap<>();
+        this.world = world;
 
         generateTerrain();
-        generateMesh();
     }
 
     private void generateTerrain() {
         for (int x = 0; x < SIZE; x++) {
             for (int z = 0; z < SIZE; z++) {
-                // Maak een simpele ondergrond van steen en een laagje gras
-                for (int y = 0; y < 5; y++) {
-                    blocks[x][y][z] = BlockType.STONE.getId();
-                }
-                blocks[x][5][z] = BlockType.GRASS.getId();
+                for (int y = 0; y < SIZE; y++) {
+                    // Bereken de absolute positie in de wereld
+                    int worldX = (int)worldPosition.x + x;
+                    int worldY = (int)worldPosition.y + y;
+                    int worldZ = (int)worldPosition.z + z;
 
+                    // Vraag de generator welk blok hier moet staan
+                    blocks[x][y][z] = TerrainGenerator.getBlockAt(worldX, worldY, worldZ);
+                }
             }
         }
-
-        blocks[8][6][8] = BlockType.GRASS.getId();
     }
 
     public void generateMesh() {
@@ -71,7 +74,9 @@ public class Chunk {
                             // Check of het GRASS is en of het de BOVENKANT (side 2) is
                             if (type == BlockType.GRASS && side == 2) {
                                 faceColor.set(0.48f, 0.95f, 0.35f, 1.0f); // Minecraft Gras-groen
-                            } else {
+                            } else if (type == BlockType.WATER) {
+                                faceColor.set(0, 0, 1, 1);
+                            }else {
                                 faceColor.set(1, 1, 1, 1);
                             }
 
@@ -95,22 +100,26 @@ public class Chunk {
 
 
     private boolean isSideVisible(int x, int y, int z, int side) {
-        int nx = x, ny = y, nz = z;
+        // Wereldcoördinaten van het buurblokje berekenen
+        int wx = (int)worldPosition.x + x;
+        int wy = (int)worldPosition.y + y;
+        int wz = (int)worldPosition.z + z;
+
         switch (side) {
-            case 0 -> nz++; case 1 -> nz--;
-            case 2 -> ny++; case 3 -> ny--;
-            case 4 -> nx--; case 5 -> nx++;
+            case 0 -> wz++; // Front
+            case 1 -> wz--; // Back
+            case 2 -> wy++; // Top
+            case 3 -> wy--; // Bottom
+            case 4 -> wx--; // Left
+            case 5 -> wx++; // Right
         }
 
-        // Als het blokje BINNEN deze chunk valt:
-        if (nx >= 0 && nx < SIZE && ny >= 0 && ny < SIZE && nz >= 0 && nz < SIZE) {
-            return BlockType.fromId(blocks[nx][ny][nz]) == BlockType.AIR;
-        }
+        // Vraag aan de wereld welk blokje op die plek staat
+        byte neighborId = world.getBlock(wx, wy, wz);
+        BlockType neighborType = BlockType.fromId(neighborId);
 
-        // Als het blokje BUITEN deze chunk valt, moeten we de World checken:
-        // Dit is een geavanceerde stap. Voor nu kun je het op 'true' laten,
-        // maar dan zie je dus muren tussen de chunks.
-        return true;
+        // Teken de face alleen als de buur NIET solide is (dus lucht of water)
+        return !neighborType.isSolid();
     }
 
     private void addFace(int x, int y, int z, int side, List<Vertex> vertices, List<Integer> indices, Vector4f color) {
@@ -172,5 +181,21 @@ public class Chunk {
 
     public Map<String, Mesh> getSubMeshes() {
         return subMeshes;
+    }
+
+    public byte getBlock(int lx, int ly, int lz) {
+        return blocks[lx][ly][lz];
+
+    }
+    public void cleanup() {
+        for (Mesh mesh : subMeshes.values()) {
+            // Zorg dat je Mesh klasse een methode heeft om glDeleteBuffers aan te roepen
+            mesh.cleanup();
+        }
+        subMeshes.clear();
+    }
+
+    public Vector3f getWorldPosition() {
+        return worldPosition;
     }
 }

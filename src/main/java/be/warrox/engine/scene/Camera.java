@@ -21,9 +21,9 @@ public class Camera {
     private float pitch;
     private float roll;
 
-    private float sensitivity = 0.1f;
+    private final float sensitivity = 0.1f;
     private float fov = 45.0f;
-    private float speed = 10.0f;
+    private final float speed = 10.0f;
 
     private final Vector3f temp = new Vector3f();
     private final Vector3f right = new Vector3f();
@@ -90,4 +90,6 @@ public class Camera {
 
 
     public Matrix4f getViewMatrix() { return viewMatrix; }
+
+    public Vector3f getPos() { return position; }
 }

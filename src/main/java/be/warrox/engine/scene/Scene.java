@@ -32,7 +32,7 @@ public class Scene {
         this.camera = camera;
     }
 
-    public Camera getCamere() {
+    public Camera getCamera() {
         return camera;
     }
 
