@@ -1,29 +1,29 @@
 package be.warrox.engine.scene;
 
-import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Shader;
-import be.warrox.engine.objects.Object;
+import be.warrox.game.world.Chunk;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scene {
-    private List<Object> objects = new ArrayList<>();
+    private List<GameObject> objects = new ArrayList<>();
     private Camera camera;
+    private List<Chunk> chunks = new ArrayList<>();
 
 
     public Scene(Shader shader) {
     }
     public void update() {
-        for (Object object : objects) {
+        for (GameObject object : objects) {
             object.update();
         }
     }
-    public void addObject(Object object) {
+    public void addObject(GameObject object) {
         objects.add(object);
     }
 
-    public List<Object> getObjects() {
+    public List<GameObject> getObjects() {
         return objects;
     }
 
@@ -34,6 +34,14 @@ public class Scene {
 
     public Camera getCamere() {
         return camera;
+    }
+
+    public void addChunk(Chunk chunk) {
+        chunks.add(chunk);
+    }
+
+    public List<Chunk> getChunks() {
+        return chunks;
     }
 
 

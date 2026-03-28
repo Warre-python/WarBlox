@@ -3,6 +3,7 @@ package be.warrox.engine.gfx;
 import be.warrox.engine.core.Window;
 import be.warrox.engine.scene.Camera;
 import be.warrox.engine.scene.Transform;
+import be.warrox.engine.util.AssetManager;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -18,22 +19,22 @@ public class Mesh {
     private int eboId; // Index Buffer
     private int vertexCount;
 
-    private Texture texture;
     private Vector4f meshColor;
     private Transform transform;
+    private String path;
 
     // Constructor for Color-based Mesh
     public Mesh(Vertex[] vertices, int[] indices, Vector4f color, Transform transform) {
-        this(vertices, indices, (Texture) null, transform); // Call the main setup logic
+        this(vertices, indices, (String) null, transform); // Call the main setup logic
         this.meshColor = color;
     }
 
     // Constructor for Texture-based Mesh
-    public Mesh(Vertex[] vertices, int[] indices, Texture texture, Transform transform) {
+    public Mesh(Vertex[] vertices, int[] indices, String path, Transform transform) {
         this.vertexCount = indices.length;
-        this.texture = texture;
         this.meshColor = new Vector4f(1, 1, 1, 1); // Default to white (no tint)
         this.transform = transform;
+        this.path = path;
 
         setupMesh(vertices, indices);
     }
@@ -43,9 +44,8 @@ public class Mesh {
         FloatBuffer vertexBuffer = null;
         IntBuffer indexBuffer = null;
 
-        if (texture != null) {
-            this.texture = texture;
-        }
+
+
 
         try {
             vaoId = glGenVertexArrays();
@@ -105,35 +105,45 @@ public class Mesh {
 
 
     public void draw(Shader shader, Camera camera) {
-
+        // 1. Bind VAO
         glBindVertexArray(vaoId);
-        if (this.texture != null) {
-            this.texture.bind();
-            shader.uploadBool("useTexture", true);
 
+        // 2. Texture logica: Alleen ophalen en binden als het pad NIET null is
+        if (path != null) {
+            Texture texture = AssetManager.getTexture(path);
+            if (texture != null) {
+                texture.bind();
+                shader.uploadBool("useTexture", true);
+            }
+        } else {
+            // Als er geen texture is, vertel de shader dat hij de Vertex Kleur moet gebruiken
+            shader.uploadBool("useTexture", false);
         }
 
-        Matrix4f model = new Matrix4f();
-        model.rotate(Math.toRadians(-55.0f), new Vector3f(1.0f, 0.0f, 0.0f));
-
-        Matrix4f view = new Matrix4f();
-        view.translate(new Vector3f(0.0f, 0.0f, -3.0f));
-
-        Matrix4f projection = new Matrix4f();
-        projection.perspective(Math.toRadians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
+        // 3. Matrices uploaden (Gebruik de matrices van de camera en transform)
         shader.uploadMat4f("uModel", this.transform.getModelMatrix());
         shader.uploadMat4f("uView", camera.getViewMatrix());
+
+        // Zorg dat Window.width/height en camera.getFov() gebruikt worden voor de aspect ratio
         shader.uploadMat4f("uProjection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
 
-
+        // 4. Tekenen
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
 
-        if (this.texture != null) {
-            this.texture.unbind();
+        // 5. Cleanup
+        if (path != null) {
+            // We halen de texture nogmaals op om te unbinden, of je bewaart de referentie even
+            Texture texture = AssetManager.getTexture(path);
+            if (texture != null) texture.unbind();
         }
-        glBindVertexArray(0);
 
+        glBindVertexArray(0);
+    }
+
+    public void cleanup() {
+        glDeleteVertexArrays(vaoId);
+        glDeleteBuffers(vboId);
+        glDeleteBuffers(eboId);
 
     }
 

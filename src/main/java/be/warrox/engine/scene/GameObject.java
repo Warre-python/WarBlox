@@ -1,17 +1,12 @@
-package be.warrox.engine.objects;
+package be.warrox.engine.scene;
 
 import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Shader;
-import be.warrox.engine.scene.Camera;
-import be.warrox.engine.scene.Transform;
-import org.joml.Math;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
-public class Object {
+public class GameObject {
     private Mesh mesh;
 
-    public Object(Mesh mesh) {
+    public GameObject(Mesh mesh) {
         this.mesh = mesh;
         init();
     }

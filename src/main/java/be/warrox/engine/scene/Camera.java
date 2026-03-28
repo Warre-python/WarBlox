@@ -23,7 +23,7 @@ public class Camera {
 
     private float sensitivity = 0.1f;
     private float fov = 45.0f;
-    private float speed = 1.0f;
+    private float speed = 10.0f;
 
     private final Vector3f temp = new Vector3f();
     private final Vector3f right = new Vector3f();
@@ -41,6 +41,9 @@ public class Camera {
 
     public void processInput(float dt) {
         float cameraSpeed = speed * dt;
+        if (KeyListener.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
+            cameraSpeed *= 2.0f;
+        }
 
         // Movement (Correct)
         if (KeyListener.isKeyPressed(GLFW_KEY_W)) position.add(front.mul(cameraSpeed, temp));

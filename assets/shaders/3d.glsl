@@ -30,9 +30,9 @@ uniform sampler2D ourTexture;
 
 void main()
 {
-    if (useTexture) {
-        FragColor = texture(ourTexture, TexCoords);
-    } else {
-        FragColor = ourColor;
-    }
+
+
+    vec4 texColor = texture(ourTexture, TexCoords);
+    // Vermenigvuldig de texture kleur met de vertex kleur
+    FragColor = texColor * ourColor;
 }

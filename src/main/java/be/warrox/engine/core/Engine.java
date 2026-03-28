@@ -2,6 +2,7 @@ package be.warrox.engine.core;
 
 import be.warrox.engine.gfx.Renderer;
 import be.warrox.engine.scene.Scene;
+import be.warrox.engine.util.AssetManager;
 import be.warrox.game.IGame;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -24,6 +25,7 @@ public class Engine implements Runnable {
         // Initialize Engine-level components
         this.renderer = new Renderer();
         this.scene = new Scene(this.renderer.getShader());
+
     }
 
     @Override
@@ -39,6 +41,8 @@ public class Engine implements Runnable {
     private void init() {
         window.init(); // Setup GLFW and OpenGL context
         renderer.init(); // Setup shaders and global GL states
+
+
 
         // The game's init now has access to the window to load assets
         gameLogic.init(window, scene);
@@ -72,6 +76,8 @@ public class Engine implements Runnable {
                 cleanup();
                 break;
             }
+
+            System.out.println("Fps: " + (1.0f / delta));
         }
     }
 
@@ -81,6 +87,7 @@ public class Engine implements Runnable {
         lastTime = currentTime;
         return delta;
     }
+
 
     private void cleanup() {
         window.cleanup();
