@@ -4,8 +4,8 @@ import org.joml.SimplexNoise;
 
 public class TerrainGenerator {
     private static final float SCALE = 0.02f; // Hoe "steil" de heuvels zijn
-    private static final int MAX_HEIGHT = 12; // Maximale hoogte van de heuvels
-    private static final int WATER_LEVEL = 4;
+    private static final int MAX_HEIGHT = 20; // Maximale hoogte van de heuvels
+    private static final int WATER_LEVEL = 6;
 
     public static byte getBlockAt(int worldX, int worldY, int worldZ) {
         // Genereer een waarde tussen -1 en 1

@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class World {
     private final Map<String, Chunk> chunks;
-    private final int renderDistance = 5; // Aantal chunks in elke richting
+    private final int renderDistance = 7; // Aantal chunks in elke richting
 
     public World() {
         this.chunks = new HashMap<>();
