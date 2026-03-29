@@ -5,6 +5,7 @@ import be.warrox.engine.gfx.Vertex;
 import be.warrox.engine.scene.Transform;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.joml.Vector4f;
 
 import java.util.*;
@@ -41,6 +42,12 @@ public class Chunk {
                     blocks[x][y][z] = TerrainGenerator.getBlockAt(worldX, worldY, worldZ);
                 }
             }
+        }
+    }
+
+    public void setBlock(int x, int y, int z, byte blockId) {
+        if (x >= 0 && x < SIZE && y >= 0 && y < HEIGHT && z >= 0 && z < SIZE) {
+            blocks[x][y][z] = blockId;
         }
     }
 
@@ -184,6 +191,9 @@ public class Chunk {
     }
 
     public byte getBlock(int lx, int ly, int lz) {
+        if (lx < 0 || lx >= SIZE || ly < 0 || ly >= HEIGHT || lz < 0 || lz >= SIZE) {
+            return BlockType.AIR.getId();
+        }
         return blocks[lx][ly][lz];
 
     }

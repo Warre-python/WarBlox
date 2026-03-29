@@ -5,10 +5,12 @@ import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Renderer;
 import be.warrox.engine.scene.Camera;
 import be.warrox.engine.scene.Scene;
+import be.warrox.game.world.BlockType;
 import be.warrox.game.world.Chunk;
 import be.warrox.game.world.Player;
 import be.warrox.game.world.World;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class MyGame implements IGame {
     private World world; // Your Voxel World
@@ -19,6 +21,9 @@ public class MyGame implements IGame {
 
         this.world = new World();
         this.player = new Player(new Vector3f(0, 0, 0));
+
+
+        this.world.addBlock(new Vector3i(0, 16, 0), BlockType.STONE);
 
 
 

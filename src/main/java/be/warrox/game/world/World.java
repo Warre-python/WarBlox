@@ -1,6 +1,8 @@
 package be.warrox.game.world;
 
 import org.joml.Vector3f;
+import org.joml.Vector3i;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,5 +101,11 @@ public class World {
         }
 
         return BlockType.AIR.getId(); // Als de chunk niet bestaat, is het lucht
+    }
+
+    public void addBlock(Vector3i pos, BlockType type) {
+        Chunk chunk = getChunk(pos.x, pos.y, pos.z);
+        chunk.addBlock(pos, type);
+        chunk.generateMesh();
     }
 }
