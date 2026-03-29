@@ -10,6 +10,7 @@ import org.joml.Vector4f;
 import java.util.*;
 
 public class Chunk {
+    public static final int HEIGHT = 32;
     public static final int SIZE = 16;
     private final byte[][][] blocks;
     private final Vector3f worldPosition;
@@ -21,17 +22,16 @@ public class Chunk {
 
     public Chunk(Vector3f worldPosition, World world) {
         this.worldPosition = worldPosition;
-        this.blocks = new byte[SIZE][SIZE][SIZE];
+        this.blocks = new byte[SIZE][HEIGHT][SIZE];
         this.subMeshes = new HashMap<>();
         this.world = world;
 
-        generateTerrain();
     }
 
-    private void generateTerrain() {
+    public void generateTerrain() {
         for (int x = 0; x < SIZE; x++) {
             for (int z = 0; z < SIZE; z++) {
-                for (int y = 0; y < SIZE; y++) {
+                for (int y = 0; y < HEIGHT; y++) {
                     // Bereken de absolute positie in de wereld
                     int worldX = (int)worldPosition.x + x;
                     int worldY = (int)worldPosition.y + y;
@@ -53,7 +53,7 @@ public class Chunk {
         Map<String, List<Integer>> indexBatches = new HashMap<>();
 
         for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
+            for (int y = 0; y < HEIGHT; y++) {
                 for (int z = 0; z < SIZE; z++) {
                     byte blockId = blocks[x][y][z];
                     if (blockId == BlockType.AIR.getId()) continue;
@@ -197,5 +197,10 @@ public class Chunk {
 
     public Vector3f getWorldPosition() {
         return worldPosition;
+    }
+
+
+    public boolean isMeshGenerated() {
+        return !subMeshes.isEmpty();
     }
 }
