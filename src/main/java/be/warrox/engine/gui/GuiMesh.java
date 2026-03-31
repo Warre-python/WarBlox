@@ -1,49 +1,58 @@
-package be.warrox.engine.gfx;
+package be.warrox.engine.gui;
 
+import be.warrox.engine.gfx.Mesh;
+import be.warrox.engine.gfx.Shader;
+import be.warrox.engine.gfx.Texture;
 import be.warrox.engine.core.Window;
+import be.warrox.engine.gfx.Vertex;
 import be.warrox.engine.scene.Camera;
 import be.warrox.engine.scene.Transform;
 import be.warrox.engine.util.AssetManager;
-import org.joml.Math;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import static org.lwjgl.opengl.GL30.*;
 
-public class Mesh {
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+
+public class GuiMesh {
+
     protected int vaoId;
     protected int vboId;
     protected int eboId; // Index Buffer
     protected int vertexCount;
 
     protected Vector4f meshColor;
-    protected Transform transform;
     protected String path;
 
-    // Constructor for Color-based Mesh
-    public Mesh(Vertex[] vertices, int[] indices, Vector4f color, Transform transform) {
-        this.vertexCount = indices.length;
-        this.meshColor = color;
-        this.transform = transform;
-        this.path = null;
 
-        setupMesh(vertices, indices);
-    }
-
-    // Constructor for Texture-based Mesh
-    public Mesh(Vertex[] vertices, int[] indices, String path, Transform transform) {
+    public GuiMesh(GuiVertex[] vertices, int[] indices, String path) {
         this.vertexCount = indices.length;
-        this.meshColor = new Vector4f(1, 1, 1, 1); // Default to white (no tint)
-        this.transform = transform;
+        this.meshColor =  new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);;
         this.path = path;
 
         setupMesh(vertices, indices);
+
     }
 
-    protected void setupMesh(Vertex[] vertices, int[] indices) {
+    public GuiMesh(GuiVertex[] vertices, int[] indices, Vector4f color) {
+        this.vertexCount = indices.length;
+        this.meshColor = color;
+        this.path = null;
+
+        setupMesh(vertices, indices);
+
+    }
+
+    protected void setupMesh(GuiVertex[] vertices, int[] indices) {
         this.vertexCount = indices.length;
         FloatBuffer vertexBuffer = null;
         IntBuffer indexBuffer = null;
@@ -56,13 +65,12 @@ public class Mesh {
             glBindVertexArray(vaoId);
 
             // 1. Pack Vertex objects into a flat FloatBuffer
-            vertexBuffer = MemoryUtil.memAllocFloat(vertices.length * Vertex.VERTEX_SIZE_FLOATS);
-            for (Vertex v : vertices) {
+            vertexBuffer = MemoryUtil.memAllocFloat(vertices.length * GuiVertex.VERTEX_SIZE_FLOATS);
+            for (GuiVertex v : vertices) {
                 vertexBuffer.put(v.position.x).put(v.position.y).put(v.position.z);
-                vertexBuffer.put(v.normal.x).put(v.normal.y).put(v.normal.z);
                 vertexBuffer.put(v.texCoords.x).put(v.texCoords.y);
-                vertexBuffer.put(v.color.x).put(v.color.y).put(v.color.z).put(v.color.w);
             }
+
             vertexBuffer.flip();
 
             // 2. VBO (Data)
@@ -78,23 +86,16 @@ public class Mesh {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
 
             // 4. Link Attributes (Using your Vertex constants!)
-            int stride = Vertex.VERTEX_SIZE_BYTES;
+            int stride = GuiVertex.VERTEX_SIZE_BYTES;
 
             // Position
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, Vertex.POS_SIZE, GL_FLOAT, false, stride, Vertex.POS_OFFSET);
+            glVertexAttribPointer(0, GuiVertex.POS_SIZE, GL_FLOAT, false, stride, GuiVertex.POS_OFFSET);
 
-            // Normals
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, Vertex.NORMAL_SIZE, GL_FLOAT, false, stride, Vertex.NORMAL_OFFSET);
 
             // Texture Coords
-            glEnableVertexAttribArray(2);
-            glVertexAttribPointer(2, Vertex.TEXCOORDS_SIZE, GL_FLOAT, false, stride, Vertex.TEXCOORDS_OFFSET);
-
-            // Color
-            glEnableVertexAttribArray(3);
-            glVertexAttribPointer(3, Vertex.COLOR_SIZE, GL_FLOAT, false, stride, Vertex.COLOR_OFFSET);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, GuiVertex.TEXCOORDS_SIZE, GL_FLOAT, false, stride, GuiVertex.TEXCOORDS_OFFSET);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
@@ -106,15 +107,16 @@ public class Mesh {
     }
 
 
-
-
-    public void draw(Shader shader, Camera camera) {
+    public void draw(Shader shader, int x, int y, int width, int height) {
         shader.use();
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
 
-        // 1. Bind VAO
         glBindVertexArray(vaoId);
 
-        // 2. Texture logica: Alleen ophalen en binden als het pad NIET null is
+        Matrix4f projection = new Matrix4f().ortho(0.0f, (float)Window.width, (float)Window.height, 0.0f, -1.0f, 1.0f);
+        Matrix4f model = new Matrix4f().translate(x, y, 0.0f).scale(width, height, 1.0f);
+
         if (path != null) {
             Texture texture = AssetManager.getTexture(path);
             if (texture != null) {
@@ -126,42 +128,21 @@ public class Mesh {
             shader.uploadBool("useTexture", false);
         }
 
-        // 3. Matrices uploaden (Alleen als camera niet null is voor 3D)
-        shader.uploadMat4f("uModel", this.transform.getModelMatrix());
+        shader.uploadVec4f("uColor", meshColor);
+        shader.uploadMat4f("projection", projection);
+        shader.uploadMat4f("model", model);
+        shader.uploadInt("ourTexture", 0);
 
-        if (camera != null) {
-            shader.uploadMat4f("uView", camera.getViewMatrix());
-            shader.uploadMat4f("uProjection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
-        }
-
-        // 4. Tekenen
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
 
-        // 5. Cleanup
         if (path != null) {
             Texture texture = AssetManager.getTexture(path);
             if (texture != null) texture.unbind();
         }
-
         shader.detach();
+
         glBindVertexArray(0);
 
-        // Enable Depth Testing for 3D
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
-
-    public void cleanup() {
-        glDeleteVertexArrays(vaoId);
-        glDeleteBuffers(vboId);
-        glDeleteBuffers(eboId);
-
-    }
-
-    public Transform getTransform() {
-        return transform;
-    }
-
 
 }

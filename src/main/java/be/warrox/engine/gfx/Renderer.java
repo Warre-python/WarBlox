@@ -9,6 +9,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Renderer {
 
     private Shader sceneShader;
+    private Shader guiShader;
 
     public void init() {
         // Basic OpenGL state setup
@@ -23,6 +24,10 @@ public class Renderer {
         // Initialize Shaders
         sceneShader = new Shader("assets/shaders/3d.glsl");
         sceneShader.compile();
+
+        guiShader = new Shader("assets/shaders/2d.glsl");
+        guiShader.compile();
+
     }
 
     public void clear() {
@@ -33,5 +38,9 @@ public class Renderer {
 
     public Shader getShader() {
         return sceneShader;
+    }
+
+    public Shader getGuiShader() {
+        return guiShader;
     }
 }
