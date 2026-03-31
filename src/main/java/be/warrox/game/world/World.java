@@ -9,7 +9,7 @@ import java.util.Map;
 public class World {
     private final Map<String, Chunk> chunks = new HashMap<>();;
 
-    private final int renderDistance = 7; // Aantal chunks in elke richting
+    private final int renderDistance = 5; // Aantal chunks in elke richting
 
     public void update(Player player) {
         int playerChunkX = Math.floorDiv((int)player.getPos().x, Chunk.SIZE);

@@ -120,9 +120,13 @@ public class Mesh {
             shader.uploadBool("useTexture", false);
         }
 
-        // 3. Matrices uploaden (Mesh only uploads its model matrix)
+        // 3. Matrices uploaden (Alleen als camera niet null is voor 3D)
         shader.uploadMat4f("uModel", this.transform.getModelMatrix());
-        // View and Projection matrices are now the responsibility of the caller (e.g., Renderer or GuiRenderer)
+
+        if (camera != null) {
+            shader.uploadMat4f("uView", camera.getViewMatrix());
+            shader.uploadMat4f("uProjection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
+        }
 
         // 4. Tekenen
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
@@ -141,6 +145,10 @@ public class Mesh {
         glDeleteBuffers(vboId);
         glDeleteBuffers(eboId);
 
+    }
+
+    public Transform getTransform() {
+        return transform;
     }
 
 

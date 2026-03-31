@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class Renderer {
 
     private Shader sceneShader;
-    private Matrix4f projectionMatrix = new Matrix4f();
 
     public void init() {
         // Basic OpenGL state setup

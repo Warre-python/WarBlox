@@ -3,7 +3,6 @@ package be.warrox.game;
 import be.warrox.engine.core.Window;
 import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Renderer;
-import be.warrox.engine.gui.Element;
 import be.warrox.engine.scene.Camera;
 import be.warrox.engine.scene.Scene;
 import be.warrox.game.world.BlockType;
@@ -11,15 +10,11 @@ import be.warrox.game.world.Chunk;
 import be.warrox.game.world.Player;
 import be.warrox.game.world.World;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 import org.joml.Vector4f;
 
 public class MyGame implements IGame {
     private World world; // Your Voxel World
     private Player player;
-
-    private Element element;
-
 
 
     @Override
@@ -31,14 +26,6 @@ public class MyGame implements IGame {
 
 
         this.world.addBlock(0, 30, 3, BlockType.STONE);
-
-
-
-        element = new Element(10, 10, 100, 100, new Vector4f(1, 0, 0, 1)); // Red rect at 10,10
-        element.setPosition(50, 50); // Move it to 50,50
-
-
-
 
 
     }
@@ -62,8 +49,6 @@ public class MyGame implements IGame {
 
     @Override
     public void render(Renderer renderer, Scene scene) {
-        //scene.getObjects().forEach(object -> object.draw(renderer.getShader(), scene.getCamere()));
-        element.draw(renderer.getShader());
 
         for (Chunk chunk : world.getChunks().values()) {
             for (Mesh mesh : chunk.getSubMeshes().values()) {
