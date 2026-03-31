@@ -19,6 +19,7 @@ public class World {
             for (int z = -renderDistance; z <= renderDistance; z++) {
                 int targetX = playerChunkX + x;
                 int targetZ = playerChunkZ + z;
+                // Voor nu laden we alleen de 'grond' chunks op y=0
                 if (getChunk(targetX, 0, targetZ) == null) {
                     addChunk(targetX, 0, targetZ);
                     Chunk newChunk = getChunk(targetX, 0, targetZ);
@@ -30,22 +31,19 @@ public class World {
         }
 
         // --- STAP 2: CHUNKS VERWIJDEREN (UNLOAD) ---
-        // We gebruiken een Iterator om veilig items uit een Map te verwijderen tijdens het loopen
         var iterator = chunks.entrySet().iterator();
-        int unloadDistance = renderDistance + 2; // Buffer van 2 chunks om herhaaldelijk laden/lossen te voorkomen
+        int unloadDistance = renderDistance + 2;
 
         while (iterator.hasNext()) {
             var entry = iterator.next();
             Chunk chunk = entry.getValue();
-            // Bereken afstand in chunks (we negeren Y voor nu)
             int cx = Math.floorDiv((int)chunk.getWorldPosition().x, Chunk.SIZE);
             int cz = Math.floorDiv((int)chunk.getWorldPosition().z, Chunk.SIZE);
             int distLineX = Math.abs(cx - playerChunkX);
             int distLineZ = Math.abs(cz - playerChunkZ);
             if (distLineX > unloadDistance || distLineZ > unloadDistance) {
-                // BELANGRIJK: Ruim eerst de Mesh op van de GPU!
                 chunk.cleanup();
-                iterator.remove(); // Verwijder uit de HashMap
+                iterator.remove();
             }
         }
     }
@@ -53,11 +51,11 @@ public class World {
 
 
     private void updateNeighbors(int x, int y, int z) {
-        int[][] neighbors = {{1,0,0}, {-1,0,0}, {0,0,1}, {0,0,-1}};
+        int[][] neighbors = {{1,0,0}, {-1,0,0}, {0,0,1}, {0,0,-1}, {0,1,0}, {0,-1,0}};
         for (int[] offset : neighbors) {
             Chunk neighbor = getChunk(x + offset[0], y + offset[1], z + offset[2]);
             if (neighbor != null) {
-                neighbor.generateMesh(); // Herbereken de mesh nu er een nieuwe buur is
+                neighbor.generateMesh();
             }
         }
     }
@@ -66,7 +64,6 @@ public class World {
     public void addChunk(int x, int y, int z) {
         String key = x + "," + y + "," + z;
         if (!chunks.containsKey(key)) {
-            // Belangrijk: we geven de grid-coördinaten door aan de Chunk
             chunks.put(key, new Chunk(new Vector3f(x * Chunk.SIZE, y * Chunk.HEIGHT, z * Chunk.SIZE), this));
         }
     }
@@ -84,28 +81,56 @@ public class World {
 
 
     public byte getBlock(int x, int y, int z) {
-        // Bereken in welke chunk dit punt valt
         int cx = Math.floorDiv(x, Chunk.SIZE);
         int cy = Math.floorDiv(y, Chunk.HEIGHT);
         int cz = Math.floorDiv(z, Chunk.SIZE);
 
-        String key = cx + "," + cy + "," + cz;
-        Chunk chunk = chunks.get(key);
+        Chunk chunk = getChunk(cx, cy, cz);
 
         if (chunk != null) {
-            // Bereken de lokale positie binnen die chunk
             int lx = x - (cx * Chunk.SIZE);
             int ly = y - (cy * Chunk.HEIGHT);
             int lz = z - (cz * Chunk.SIZE);
             return chunk.getBlock(lx, ly, lz);
         }
 
-        return BlockType.AIR.getId(); // Als de chunk niet bestaat, is het lucht
+        return BlockType.AIR.getId();
     }
 
-    public void addBlock(Vector3i pos, BlockType type) {
-        Chunk chunk = getChunk(pos.x, pos.y, pos.z);
-        chunk.addBlock(pos, type);
+    public void addBlock(int x, int y, int z, BlockType type) {
+        int cx = Math.floorDiv(x, Chunk.SIZE);
+        int cy = Math.floorDiv(y, Chunk.HEIGHT);
+        int cz = Math.floorDiv(z, Chunk.SIZE);
+
+        Chunk chunk = getChunk(cx, cy, cz);
+        if (chunk == null) {
+            addChunk(cx, cy, cz);
+            chunk = getChunk(cx, cy, cz);
+            // Zorg dat het terrein eerst gegenereerd wordt, anders is de rest van de chunk leeg!
+            chunk.generateTerrain();
+        }
+
+        int lx = x - (cx * Chunk.SIZE);
+        int ly = y - (cy * Chunk.HEIGHT);
+        int lz = z - (cz * Chunk.SIZE);
+        chunk.setBlock(lx, ly, lz, type.getId());
+        
+        // Update de mesh van de chunk zelf
         chunk.generateMesh();
+
+        // Update ook buur-meshes als we aan de rand van een chunk zitten
+        if (lx == 0) updateNeighborMesh(cx - 1, cy, cz);
+        if (lx == Chunk.SIZE - 1) updateNeighborMesh(cx + 1, cy, cz);
+        if (ly == 0) updateNeighborMesh(cx, cy - 1, cz);
+        if (ly == Chunk.HEIGHT - 1) updateNeighborMesh(cx, cy + 1, cz);
+        if (lz == 0) updateNeighborMesh(cx, cy, cz - 1);
+        if (lz == Chunk.SIZE - 1) updateNeighborMesh(cx, cy, cz + 1);
+    }
+
+    private void updateNeighborMesh(int cx, int cy, int cz) {
+        Chunk neighbor = getChunk(cx, cy, cz);
+        if (neighbor != null) {
+            neighbor.generateMesh();
+        }
     }
 }

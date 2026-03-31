@@ -14,14 +14,14 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
-    private int vaoId;
-    private int vboId;
-    private int eboId; // Index Buffer
-    private int vertexCount;
+    protected int vaoId;
+    protected int vboId;
+    protected int eboId; // Index Buffer
+    protected int vertexCount;
 
-    private Vector4f meshColor;
-    private Transform transform;
-    private String path;
+    protected Vector4f meshColor;
+    protected Transform transform;
+    protected String path;
 
     // Constructor for Color-based Mesh
     public Mesh(Vertex[] vertices, int[] indices, Vector4f color, Transform transform) {
@@ -120,19 +120,15 @@ public class Mesh {
             shader.uploadBool("useTexture", false);
         }
 
-        // 3. Matrices uploaden (Gebruik de matrices van de camera en transform)
+        // 3. Matrices uploaden (Mesh only uploads its model matrix)
         shader.uploadMat4f("uModel", this.transform.getModelMatrix());
-        shader.uploadMat4f("uView", camera.getViewMatrix());
-
-        // Zorg dat Window.width/height en camera.getFov() gebruikt worden voor de aspect ratio
-        shader.uploadMat4f("uProjection", Transform.getProjectionMatrix(Window.width, Window.height, camera));
+        // View and Projection matrices are now the responsibility of the caller (e.g., Renderer or GuiRenderer)
 
         // 4. Tekenen
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
 
         // 5. Cleanup
         if (path != null) {
-            // We halen de texture nogmaals op om te unbinden, of je bewaart de referentie even
             Texture texture = AssetManager.getTexture(path);
             if (texture != null) texture.unbind();
         }
