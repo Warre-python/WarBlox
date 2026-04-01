@@ -5,19 +5,19 @@ public enum BlockType {
 
     // Minecraft style: Define all 6 sides
     GRASS((byte)1,
-            "grass_block_top",    // Top
-            "dirt",               // Bottom
-            "grass_block_side",   // Front
-            "grass_block_side",   // Back
-            "grass_block_side",   // Left
-            "grass_block_side"    // Right
+            "block/grass_block_top",    // Top
+            "block/dirt",               // Bottom
+            "block/grass_block_side",   // Front
+            "block/grass_block_side",   // Back
+            "block/grass_block_side",   // Left
+            "block/grass_block_side"    // Right
             , true
     ),
 
-    STONE((byte)2, "stone", "stone", "stone", "stone", "stone", "stone", true),
+    STONE((byte)2, "block/stone", "block/stone", "block/stone", "block/stone", "block/stone", "block/stone", true),
 
-    WATER((byte)3, "grass_block_top", "grass_block_top", "grass_block_top", "grass_block_top", "grass_block_top", "grass_block_top", true),
-    DIRT((byte)4, "dirt", "dirt", "dirt", "dirt", "dirt", "dirt", true);
+    WATER((byte)3, "block/grass_block_top", "block/grass_block_top", "block/grass_block_top", "block/grass_block_top", "block/grass_block_top", "block/grass_block_top", true),
+    DIRT((byte)4, "block/dirt", "block/dirt", "block/dirt", "block/dirt", "block/dirt", "block/dirt", true);
 
 
     private final byte id;

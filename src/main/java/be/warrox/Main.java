@@ -10,7 +10,7 @@ public class Main {
         IGame myGame = new MyGame();
 
         // 2. Create the engine and pass the game into it
-        Engine engine = new Engine("Voxel Engine v1.0", 1280, 720, myGame, true);
+        Engine engine = new Engine("Voxel Engine v1.0", 1280, 720, myGame, false);
 
         // 3. Start the thread
         engine.run();

@@ -73,7 +73,6 @@ public class Engine implements Runnable {
             window.update();
 
             if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
-                cleanup();
                 break;
             }
 
@@ -90,6 +89,7 @@ public class Engine implements Runnable {
 
 
     private void cleanup() {
+        gameLogic.cleanup();
         window.cleanup();
         // Add renderer or game cleanup if necessary
     }

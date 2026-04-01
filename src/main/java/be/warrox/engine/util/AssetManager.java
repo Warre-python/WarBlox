@@ -22,7 +22,7 @@ public class AssetManager {
         }
 
 
-        String fullPath = "assets/textures/block/" + shortName + ".png";
+        String fullPath = "assets/textures/" + shortName + ".png";
 
         // Maak de nieuwe texture aan en sla hem op in de map (cache)
         Texture texture = new Texture(fullPath);

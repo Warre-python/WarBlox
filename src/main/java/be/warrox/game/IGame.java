@@ -9,4 +9,5 @@ public interface IGame {
     void input(Window window, Scene scene, float delta);
     void update(float interval, Scene scene);
     void render(Renderer renderer, Scene scene);
+    default void cleanup() {}
 }

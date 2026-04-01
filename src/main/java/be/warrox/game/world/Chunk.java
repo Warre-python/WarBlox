@@ -1,6 +1,7 @@
 package be.warrox.game.world;
 
 import be.warrox.engine.gfx.Mesh;
+import be.warrox.engine.gfx.MeshData;
 import be.warrox.engine.gfx.Vertex;
 import be.warrox.engine.scene.Transform;
 import org.joml.Vector2f;
@@ -9,6 +10,7 @@ import org.joml.Vector3i;
 import org.joml.Vector4f;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Chunk {
     public static final int HEIGHT = 32;
@@ -17,14 +19,15 @@ public class Chunk {
     private final Vector3f worldPosition;
 
     // We bewaren een map van Texture-naam -> Mesh
-    private final Map<String, Mesh> subMeshes;
+    private final Map<String, Mesh> subMeshes = new ConcurrentHashMap<>();
 
     private final World world;
+    private volatile boolean terrainGenerated = false;
+    private volatile boolean meshGenerated = false;
 
     public Chunk(Vector3f worldPosition, World world) {
         this.worldPosition = worldPosition;
         this.blocks = new byte[SIZE][HEIGHT][SIZE];
-        this.subMeshes = new HashMap<>();
         this.world = world;
 
     }
@@ -43,6 +46,7 @@ public class Chunk {
                 }
             }
         }
+        terrainGenerated = true;
     }
 
     public void setBlock(int x, int y, int z, byte blockId) {
@@ -51,11 +55,7 @@ public class Chunk {
         }
     }
 
-    public void generateMesh() {
-        // Cleanup oude meshes indien nodig
-        subMeshes.clear();
-
-        // Tijdelijke opslag voor vertices en indices per texture
+    public MeshData generateMeshData() {
         Map<String, List<Vertex>> vertexBatches = new HashMap<>();
         Map<String, List<Integer>> indexBatches = new HashMap<>();
 
@@ -67,42 +67,54 @@ public class Chunk {
 
                     BlockType type = BlockType.fromId(blockId);
 
-                    // Check alle 6 kanten
                     for (int side = 0; side < 6; side++) {
                         if (isSideVisible(x, y, z, side)) {
                             String texName = type.getTextureForSide(side);
 
-                            // Zorg dat er een lijst bestaat voor deze specifieke texture
                             vertexBatches.putIfAbsent(texName, new ArrayList<>());
                             indexBatches.putIfAbsent(texName, new ArrayList<>());
 
-                            Vector4f faceColor = new Vector4f(1, 1, 1, 1); // Standaard wit (geen aanpassing)
+                            Vector4f color = new Vector4f(1,1,1,1);
 
-                            // Check of het GRASS is en of het de BOVENKANT (side 2) is
                             if (type == BlockType.GRASS && side == 2) {
-                                faceColor.set(0.48f, 0.95f, 0.35f, 1.0f); // Minecraft Gras-groen
+                                color.set(0.48f, 0.95f, 0.35f, 1);
                             } else if (type == BlockType.WATER) {
-                                faceColor.set(0, 0, 1, 1);
-                            }else {
-                                faceColor.set(1, 1, 1, 1);
+                                color.set(0,0,1,1);
                             }
 
-                            addFace(x, y, z, side, vertexBatches.get(texName), indexBatches.get(texName), faceColor);
+                            addFace(x, y, z, side,
+                                    vertexBatches.get(texName),
+                                    indexBatches.get(texName),
+                                    color);
                         }
                     }
                 }
             }
         }
 
-        // Maak van elke batch een echte Mesh
-        for (String texName : vertexBatches.keySet()) {
-            Vertex[] verts = vertexBatches.get(texName).toArray(new Vertex[0]);
-            int[] inds = indexBatches.get(texName).stream().mapToInt(i -> i).toArray();
+        MeshData data = new MeshData();
 
-            // We gebruiken de worldPosition in de Transform, dus x,y,z in addFace blijven lokaal (0-16)
-            Mesh mesh = new Mesh(verts, inds, texName, new Transform(worldPosition, new Vector3f(), new Vector3f(1)));
-            subMeshes.put(texName, mesh);
+        for (String tex : vertexBatches.keySet()) {
+            data.vertices.put(tex, vertexBatches.get(tex).toArray(new Vertex[0]));
+            data.indices.put(tex, indexBatches.get(tex).stream().mapToInt(i -> i).toArray());
         }
+
+        return data;
+    }
+
+    public void uploadMesh(MeshData data) {
+        cleanup(); // remove old meshes safely
+
+        for (String tex : data.vertices.keySet()) {
+            Mesh mesh = new Mesh(
+                    data.vertices.get(tex),
+                    data.indices.get(tex),
+                    tex,
+                    new Transform(worldPosition, new Vector3f(), new Vector3f(1))
+            );
+            subMeshes.put(tex, mesh);
+        }
+        meshGenerated = true;
     }
 
 
@@ -191,6 +203,7 @@ public class Chunk {
     }
 
     public byte getBlock(int lx, int ly, int lz) {
+        if (!terrainGenerated) return BlockType.AIR.getId();
         if (lx < 0 || lx >= SIZE || ly < 0 || ly >= HEIGHT || lz < 0 || lz >= SIZE) {
             return BlockType.AIR.getId();
         }
@@ -199,10 +212,10 @@ public class Chunk {
     }
     public void cleanup() {
         for (Mesh mesh : subMeshes.values()) {
-            // Zorg dat je Mesh klasse een methode heeft om glDeleteBuffers aan te roepen
             mesh.cleanup();
         }
         subMeshes.clear();
+        meshGenerated = false;
     }
 
     public Vector3f getWorldPosition() {
@@ -211,6 +224,14 @@ public class Chunk {
 
 
     public boolean isMeshGenerated() {
-        return !subMeshes.isEmpty();
+        return meshGenerated;
+    }
+
+    public boolean isTerrainGenerated() {
+        return terrainGenerated;
+    }
+
+    public void setMeshGenerated(boolean meshGenerated) {
+        this.meshGenerated = meshGenerated;
     }
 }
