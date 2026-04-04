@@ -16,6 +16,8 @@ public class World {
     private final Queue<Runnable> mainThreadQueue = new ConcurrentLinkedQueue<>();
     private final int renderDistance = 5;
 
+
+
     private final ExecutorService chunkExecutor = Executors.newFixedThreadPool(
             Math.max(1, Runtime.getRuntime().availableProcessors() - 1)
     );
@@ -98,6 +100,7 @@ public class World {
         if (!chunks.containsKey(key)) {
             chunks.put(key, new Chunk(new Vector3f(x * Chunk.SIZE, y * Chunk.HEIGHT, z * Chunk.SIZE), this));
         }
+
     }
 
     public Map<String, Chunk> getChunks() {
@@ -121,28 +124,41 @@ public class World {
     }
 
     public void addBlock(int x, int y, int z, BlockType type) {
+        // 1. Boundary Check: Prevent ArrayIndexOutOfBounds if clicking outside world height
+        if (y < 0 || y >= Chunk.HEIGHT) return;
+
         int cx = Math.floorDiv(x, Chunk.SIZE);
-        int cy = Math.floorDiv(y, Chunk.HEIGHT);
+        int cy = Math.floorDiv(y, Chunk.HEIGHT); // Usually 0 in your setup
         int cz = Math.floorDiv(z, Chunk.SIZE);
 
         Chunk chunk = getChunk(cx, cy, cz);
+
+        // 2. Ensure the chunk exists before modifying
         if (chunk == null) {
             addChunk(cx, cy, cz);
             chunk = getChunk(cx, cy, cz);
+            // If it's a brand new chunk, we generate terrain immediately
             chunk.generateTerrain();
         }
 
         int lx = x - (cx * Chunk.SIZE);
         int ly = y - (cy * Chunk.HEIGHT);
         int lz = z - (cz * Chunk.SIZE);
+
+        // 3. Set the block
         chunk.setBlock(lx, ly, lz, type.getId());
 
+        // 4. Update meshes (Self + Neighbors if on edge)
         updateChunkMesh(chunk);
-        
+
+        // Neighbor updates: Only update if the neighbor actually exists
         if (lx == 0) updateChunkMesh(getChunk(cx - 1, cy, cz));
         if (lx == Chunk.SIZE - 1) updateChunkMesh(getChunk(cx + 1, cy, cz));
+
+        // Vertical neighbors (if you decide to support multiple chunk layers later)
         if (ly == 0) updateChunkMesh(getChunk(cx, cy - 1, cz));
         if (ly == Chunk.HEIGHT - 1) updateChunkMesh(getChunk(cx, cy + 1, cz));
+
         if (lz == 0) updateChunkMesh(getChunk(cx, cy, cz - 1));
         if (lz == Chunk.SIZE - 1) updateChunkMesh(getChunk(cx, cy, cz + 1));
     }

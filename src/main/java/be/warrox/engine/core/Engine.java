@@ -2,8 +2,7 @@ package be.warrox.engine.core;
 
 import be.warrox.engine.gfx.Renderer;
 import be.warrox.engine.scene.Scene;
-import be.warrox.engine.util.AssetManager;
-import be.warrox.game.IGame;
+import be.warrox.engine.gameInterfaces.IGame;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -76,7 +75,6 @@ public class Engine implements Runnable {
                 break;
             }
 
-            System.out.println("Fps: " + (1.0f / delta));
         }
     }
 

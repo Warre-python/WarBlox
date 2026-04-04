@@ -1,10 +1,11 @@
 package be.warrox.game;
 
 import be.warrox.engine.core.Window;
+import be.warrox.engine.gameInterfaces.IGame;
+import be.warrox.engine.gameInterfaces.IHUD;
 import be.warrox.engine.gfx.Mesh;
 import be.warrox.engine.gfx.Renderer;
-import be.warrox.engine.gui.Element;
-import be.warrox.engine.gui.HUD;
+import be.warrox.game.util.MyHUD;
 import be.warrox.engine.scene.Camera;
 import be.warrox.engine.scene.Scene;
 import be.warrox.game.world.BlockType;
@@ -12,12 +13,11 @@ import be.warrox.game.world.Chunk;
 import be.warrox.game.world.Player;
 import be.warrox.game.world.World;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 public class MyGame implements IGame {
     private World world; // Your Voxel World
     private Player player;
-    private HUD hud;
+    private IHUD hud;
 
 
     @Override
@@ -29,7 +29,8 @@ public class MyGame implements IGame {
 
         this.world.addBlock(0, 30, 3, BlockType.GRASS);
 
-        this.hud = new HUD();
+
+        this.hud = new MyHUD();
 
 
     }

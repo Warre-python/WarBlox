@@ -68,6 +68,7 @@ public class Window {
         glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPosCallback(windowHandle, MouseListener::mousePosCallback);
         glfwSetScrollCallback(windowHandle, MouseListener::mouseScrollCallback);
+        glfwSetMouseButtonCallback(windowHandle, MouseListener::mouseButtonCallback);
 
         // Center the window on screen
         try (MemoryStack stack = stackPush()) {

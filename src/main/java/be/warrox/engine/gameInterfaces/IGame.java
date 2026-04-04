@@ -1,4 +1,4 @@
-package be.warrox.game;
+package be.warrox.engine.gameInterfaces;
 
 import be.warrox.engine.core.Window;
 import be.warrox.engine.gfx.Renderer;

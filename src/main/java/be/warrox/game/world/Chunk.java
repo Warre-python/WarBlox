@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Chunk {
-    public static final int HEIGHT = 32;
+    public static final int HEIGHT = 100;
     public static final int SIZE = 16;
     private final byte[][][] blocks;
     private final Vector3f worldPosition;

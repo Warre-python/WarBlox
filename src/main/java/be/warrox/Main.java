@@ -1,7 +1,7 @@
 package be.warrox;
 
 import be.warrox.engine.core.Engine;
-import be.warrox.game.IGame;
+import be.warrox.engine.gameInterfaces.IGame;
 import be.warrox.game.MyGame;
 
 public class Main {
